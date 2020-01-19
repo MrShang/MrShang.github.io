@@ -25,7 +25,7 @@
     root: '/',
     scheme: 'Muse',
     version: '7.7.0',
-    exturl: false,
+    exturl: true,
     sidebar: {"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},
     copycode: {"enable":false,"show_result":false,"style":null},
     back2top: {"enable":true,"sidebar":false,"scrollpercent":false},
@@ -122,7 +122,8 @@
         <span class="logo-line-after"><i></i></span>
       </a>
     </div>
-        <p class="site-subtitle">The steps you take don't need to be big. They just need to take you in the right direction.</p>
+        <h1 class="site-subtitle" itemprop="description">The steps you take don't need to be big. They just need to take you in the right direction.</h1>
+      
   </div>
 
   <div class="site-nav-toggle">
@@ -175,13 +176,33 @@
   <div class="post-block">
     <div class="posts-collapse">
       <div class="collection-title">
-        <span class="collection-header">Um..! 2 posts in total. Keep on posting.</span>
+        <span class="collection-header">Um..! 3 posts in total. Keep on posting.</span>
       </div>
 
       
     <div class="collection-year">
-      <h1 class="collection-header">2020</h1>
+      <h2 class="collection-header">2020</h2>
     </div>
+
+  <article itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
+
+      <div class="post-meta">
+        <time itemprop="dateCreated"
+              datetime="2020-01-16T16:53:13+08:00"
+              content="2020-01-16">
+          01-16
+        </time>
+      </div>
+
+      <h3 class="post-title">
+          <a class="post-title-link" href="/2020/01/16/rabbitMQ/" itemprop="url">
+            <span itemprop="name">rabbitMQ</span>
+          </a>
+      </h3>
+
+    </header>
+  </article>
 
   <article itemscope itemtype="http://schema.org/Article">
     <header class="post-header">
@@ -194,11 +215,11 @@
         </time>
       </div>
 
-      <h2 class="post-title">
+      <h3 class="post-title">
           <a class="post-title-link" href="/2020/01/15/MessageQueue/" itemprop="url">
-            <span itemprop="name">MessageQueue</span>
+            <span itemprop="name">消息队列</span>
           </a>
-      </h2>
+      </h3>
 
     </header>
   </article>
@@ -214,11 +235,11 @@
         </time>
       </div>
 
-      <h2 class="post-title">
+      <h3 class="post-title">
           <a class="post-title-link" href="/2020/01/14/DistributeTransaction/" itemprop="url">
             <span itemprop="name">分布式事务</span>
           </a>
-      </h2>
+      </h3>
 
     </header>
   </article>
@@ -297,22 +318,22 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">2</span>
+          <span class="site-state-item-count">3</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
       <div class="site-state-item site-state-tags">
-        <span class="site-state-item-count">2</span>
+        <span class="site-state-item-count">3</span>
         <span class="site-state-item-name">tags</span>
       </div>
   </nav>
 </div>
   <div class="links-of-author motion-element">
       <span class="links-of-author-item">
-        <a href="https://github.com/MrShang" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;MrShang" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+        <span class="exturl" data-url="aHR0cHM6Ly9naXRodWIuY29tL01yU2hhbmc=" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;MrShang"><i class="fa fa-fw fa-github"></i>GitHub</span>
       </span>
       <span class="links-of-author-item">
-        <a href="mailto:shchaoshuai@foxail.com" title="E-Mail → mailto:shchaoshuai@foxail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+        <span class="exturl" data-url="bWFpbHRvOnNoY2hhb3NodWFpQGZveGFpbC5jb20=" title="E-Mail → mailto:shchaoshuai@foxail.com"><i class="fa fa-fw fa-envelope"></i>E-Mail</span>
       </span>
   </div>
 
@@ -341,10 +362,10 @@
   </span>
   <span class="author" itemprop="copyrightHolder">Chris Shang</span>
 </div>
-  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> v4.2.0
+  <div class="powered-by">Powered by <span class="exturl theme-link" data-url="aHR0cHM6Ly9oZXhvLmlv">Hexo</span> v4.2.0
   </div>
   <span class="post-meta-divider">|</span>
-  <div class="theme-info">Theme – <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> v7.7.0
+  <div class="theme-info">Theme – <span class="exturl theme-link" data-url="aHR0cHM6Ly9tdXNlLnRoZW1lLW5leHQub3Jn">NexT.Muse</span> v7.7.0
   </div>
 
         
