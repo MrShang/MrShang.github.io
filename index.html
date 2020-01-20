@@ -175,6 +175,317 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/01/19/kafka/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="Chris Shang">
+      <meta itemprop="description" content="Java, Architect">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Architect">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/01/19/kafka/" class="post-title-link" itemprop="url">kafka</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2020-01-19 16:07:27" itemprop="dateCreated datePublished" datetime="2020-01-19T16:07:27+08:00">2020-01-19</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2020-01-20 11:13:53" itemprop="dateModified" datetime="2020-01-20T11:13:53+08:00">2020-01-20</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="kafka应用场景"><a href="#kafka应用场景" class="headerlink" title="kafka应用场景"></a>kafka应用场景</h2><p>kafka是分布式消息系统，具有高吞吐量，可容错的发布-订阅消息系统。</p>
+<p>应用场景:</p>
+<ul>
+<li><p>用户活动追踪</p>
+</li>
+<li><p>日志聚合</p>
+</li>
+<li><p>限流削峰</p>
+</li>
+</ul>
+<p>高吞吐率实现：</p>
+<ul>
+<li>顺序读写</li>
+<li>零拷贝</li>
+<li>批量发送</li>
+<li>消息压缩</li>
+</ul>
+<h2 id="kafka基本概念"><a href="#kafka基本概念" class="headerlink" title="kafka基本概念"></a>kafka基本概念</h2><ul>
+<li><p><strong>Topic</strong>，相当于消息的一个主题，标签</p>
+</li>
+<li><p><strong>Partition</strong>，一个topic可以有多个partition，一个partition对应系统上的一个到多个目录。一个topic的partition数量应该是broker的整数倍。 </p>
+</li>
+<li><p><strong>segment</strong>，一个partition有多个segment组成，每个segment文件大小相等</p>
+<p>文件由.log 和 .index文件组成，.index是存放.log文件中消息的索引</p>
+<p>查看log文件：</p>
+<p>bin/kafka-run-class.sh kafka.tools.DumpLogSegments –files /tmp/kafka-logs-3/test-0/00000000000000000000.log –print-data-log </p>
+</li>
+<li><p><strong>broker</strong>，kafka集群中的每个节点称为一个broker</p>
+</li>
+<li><p><strong>producer</strong>，消息的生产者</p>
+</li>
+<li><p><strong>consumer</strong>，消息的消费者，</p>
+<ul>
+<li><p>一个消费者可以消费多个topic的消息，</p>
+</li>
+<li><p>一个消费者可以消费一个topic的多个partition的消息</p>
+</li>
+<li><p>一个partition允许多个消费者同时消费</p>
+</li>
+</ul>
+</li>
+<li><p><strong>consumer group</strong>，消费者组，kafka保证一个消息只会被一个组中的某一个kafka消费。</p>
+</li>
+<li><p><strong>replicas of partition</strong>, 分区副本，为了防止消息丢失而创建的分区的备份。</p>
+</li>
+<li><p><strong>partition leader</strong>，每个partition有多个副本，而读写操作只能发生在leader上</p>
+</li>
+<li><p><strong>partition follower</strong>，所有follower都需要从leader同步消息,Leader与follower是主备关系，而非主从关系。</p>
+</li>
+<li><p><strong>ISR</strong>， In-Sync-Replicas,是指副本同步列表</p>
+<ul>
+<li><p><strong>AR</strong>，Assigned Replicas,在最初没有leader时，ISR=AR</p>
+</li>
+<li><p><strong>OSR</strong>，Outof-Sync-Replicas</p>
+</li>
+<li><p><strong>AR</strong> = ISR + OSR + Leader，ISR是存放在zk中的</p>
+</li>
+</ul>
+</li>
+<li><p><strong>offset</strong>,每条消息都有一个当前Partition下唯一的64字节的offset</p>
+</li>
+<li><p><strong>broker controller</strong>， kafka集群中有一个broker会被选举出来，作为controller，负责管理整个集群的partition和replicas的状态</p>
+<p>只有broker controller会向zookeeper中注册watcher</p>
+</li>
+<li><p><strong>脑裂：（Brain Split）</strong>，由于某种原因导致高可用集群中出现了两个master。zk的watcher机制及分布式锁会引发master的假死，从而导致脑裂。</p>
+</li>
+<li><p><strong>HW（High Water-Mark）与 LEO（Log End Offset）</strong></p>
+<ul>
+<li><p>HW 是kafka消费者可以消费到的最高partition的偏移量，HW保证了kafka集群中消息的一致性。</p>
+</li>
+<li><p>LEO 是日志消息最后的偏移量</p>
+</li>
+<li><p>对于partition leader中新写入的消息，是不能立即被消费者消费的，只有当ISR中所有的partition follower消费之后，更新HW，写入ISR，此时消息才能被消费者消费。HW的更新速度取决于那个性能最差的broker</p>
+</li>
+</ul>
+</li>
+<li><p><strong>zookeeper</strong></p>
+<ul>
+<li><p>zookeeper负则broker controller的选举。</p>
+</li>
+<li><p>partition leader是由 broker controller负则选举的</p>
+</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li><p><strong>Coordinator</strong></p>
+<p>coordinator是用来管理消费者组的，是运行在每个broker上的group coordinator进程，主要负则offset的位移管理和rebalance,一个coordinator可以管理多个消费者组 </p>
+</li>
+<li><p><strong>rebalance</strong></p>
+<p>当消费者组中的消费者数量发生变化，或者topic中的partition数量发生变化，会导致partition的重新分配，这个过程叫做Rebalance.</p>
+<p>rebalance可以给系统带来高可用性和伸缩性，但是<strong>在Rebalance期间，消费者是无法读取消息的</strong>，因此要避免不必要的Rebalance</p>
+</li>
+</ul>
+<p>  <strong>引发Rebalance的情形：</strong></p>
+<ul>
+<li>消费者组中添加消费者</li>
+<li>消费者取消订阅，关闭或崩溃</li>
+<li>向一个topic中添加新的partition</li>
+<li>当有broker挂了</li>
+</ul>
+<ul>
+<li><p><strong>offset commit</strong></p>
+<p>消费者从partition中取出一批消息放入buffer中进行消费，在规定的时间内（seession.timeout.ms）消费完消息后，会自动将其消费的commit提交给broker，broker可以判断哪些消息有被消费过，若在规定时间内没有消费完毕，其是不会提交offset的, 可以避免在Rebalance时重复消费。</p>
+</li>
+</ul>
+<p><strong>注:</strong> 从kafka0.9开始，offset保存在brokers中，__consumers-offsets</p>
+<h2 id="kafka工作原理与流程"><a href="#kafka工作原理与流程" class="headerlink" title="kafka工作原理与流程"></a><strong>kafka工作原理与流程</strong></h2><ul>
+<li><p><strong>消息路由</strong>（即写入的消息放入到哪个partition）</p>
+<ul>
+<li><p>若指定了partition,则写入指定的partition</p>
+</li>
+<li><p>若未指定partition，但指定了key，则对key取hash然后对partition个数取余</p>
+</li>
+<li><p>partition和key均为指定，则根据轮询算法选出一个partition</p>
+</li>
+</ul>
+</li>
+<li><p><strong>消息写入算法</strong>（即消息写入的过程）</p>
+<ol>
+<li><p>producer从zookeeper中获取partition的leader</p>
+</li>
+<li><p>producer将消息发送给leader</p>
+</li>
+<li><p>leader将消息写入到本地log</p>
+</li>
+<li><p>ISR中的follower从leader中pull消息，写入本地log后向leader发送ack</p>
+</li>
+<li><p>leader收到所有follower的ack后，增加HW并向producer发送ACK</p>
+</li>
+</ol>
+</li>
+<li><p><strong>HW截断机制</strong></p>
+<p>HW截断机制保证了partition的leader宕机之后，leader与follower之间的数据不一致。</p>
+<p>两种情况：</p>
+<ul>
+<li>当leader宕机之后，选举出一个新的leader，为了防止leader和follower的数据不一致，此时所有的FOLLOWER都要将数据截断到HW位置, 然后再同步新leader中的数据</li>
+<li>当leader从宕机中恢复后，发现新的leader中和自己的数据不一致，此时宕机的leader会将数据截断到宕机之前的HW位置，然后同步新的leader中的数据</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li><p><strong>消息发送的可靠性机制</strong></p>
+<p>producer向kafka发送消息时，可以选择需要的可靠性级别，通过request.required.acks参数的值进行设置</p>
+<ul>
+<li><p>0值（异步发送）</p>
+<p>不需要kafka反馈成功ack，效率最高，可靠性最低，因为消息可能会丢失。消息丢失的情况：</p>
+<ul>
+<li><p>在传输途中丢失，网络原因</p>
+</li>
+<li><p>在broker中丢失，消息发到broker时是先放入到buffer，当broker的buffer满足将消息写入到partition时（容量到，时间到，或数量到）</p>
+</li>
+<li><p>在buffer正要写入到partition但还未写入时，新的消息又来了，可能丢失。</p>
+</li>
+<li><p>顺序与生产顺序不一致（网络原因）</p>
+</li>
+</ul>
+</li>
+<li><p>1值（同步发送）</p>
+<p>消息发送成功后，立即向生产者返回ack(未等待ISR中的follower同步消息)</p>
+<p>当leader收到新的消息后还未同步，leader宕机，新选举出的leader是不知道该信息存在的，造成消息的丢失。</p>
+</li>
+<li><p>-1值（同步发送）</p>
+<p>leader收到消息，并向ISR列表中的所有FOLLOWER都同步了消息之后再向producer返回ack.</p>
+<p>该模式消息几乎不会丢失，但有可能出现消息重复接收的情况。</p>
+</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li><strong>消费者消费过程解析</strong><ul>
+<li>消费者消费订阅的topic, broker controller会为消费者指定消息的partition，并将partition的offset发送给消费者</li>
+<li>当有生产者向该partition中生产消息时，broker会将消息推送给消费者</li>
+<li>消费者收到推送，消费该消息</li>
+<li>消费者消费完该消息，向broker发送消费成功反馈</li>
+<li>broker收到消费者反馈，更新partition中的offset</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li><p><strong>partition的leader选举范围</strong></p>
+<p>partition的leader宕机后，broker controller从ISR中选举一个FOLLOWER成为新的leader，但若ISR中所有的FOLLOWER都宕机了, 则可以通过<strong>unclean.leader.election.enable</strong>的取值来设置leader的选举范围</p>
+</li>
+<li><p><strong>unclean.leader.election.enable</strong></p>
+<ul>
+<li><p>false</p>
+<p>必须等到副本中有FOLLOWER活过来再进行新的选举，可靠性有保证，但可用性低。</p>
+</li>
+<li><p>true</p>
+<p>选择任何一个没有宕机的FOLLOWER，但该FOLLOWER可能不在ISR中（OSR）。</p>
+</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li><p><strong>重复消费及解决方案</strong></p>
+<ul>
+<li><p>同一个consumer重复消费</p>
+<p>有一个消费的超时时间，auto.commit.interval.ms，在该时间内没有消费完消息，此时consumer会向broker提交一个异常，但是由于没有消费完，</p>
+<p>所以没有向partition提交offset，所以再次消费时还是消费的同样的消息。</p>
+</li>
+<li><p>不同的consumer重复消费</p>
+<p>当consumer消费了某条消息后，提交了offset，但是由于网络等原因，没有在session.timeout.ms中将该offset发送给broker，broker认为该consumer宕机，然后rebalnce,这个partition又被分配给了其他消费者，由于该partition的offset没有被修改，所以会再次被消费</p>
+</li>
+</ul>
+</li>
+</ul>
+<p>​        <strong>解决方案</strong></p>
+<p>​            增加auto.commit.interval.ms</p>
+<p>​            设置enable.auto.commit为false，将kafka自动提交offset该为手动提交</p>
+<p>​            手动提交分为：<strong>同步提交</strong>，<strong>异步提交</strong>，<strong>同异步联合提交</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">SyncAsyncManualConsumer</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>(<span class="string">"KafkaConsumerTest"</span>, <span class="keyword">false</span>);</span><br><span class="line">        Properties properties = <span class="keyword">new</span> Properties();</span><br><span class="line">        String brokers = <span class="string">"kafkaOS1:9092,kafkaOS2:9092,kafkaOS3:9092"</span>;</span><br><span class="line">        properties.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, brokers);</span><br><span class="line">        properties.put(ConsumerConfig.GROUP_ID_CONFIG, <span class="string">"cityGro11"</span>);</span><br><span class="line">        properties.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, <span class="string">"false"</span>);</span><br><span class="line">        <span class="comment">// properties.put(ConsumerConfig.AUTO_COMMIT_INTERVAL_MS_CONFIG, "1000");</span></span><br><span class="line">        <span class="comment">// 设置一次提交的offset个数</span></span><br><span class="line">        properties.put(ConsumerConfig.MAX_POLL_RECORDS_CONFIG, <span class="number">10</span>);</span><br><span class="line">        properties.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, <span class="string">"earliest"</span>);</span><br><span class="line">        properties.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG,</span><br><span class="line">                <span class="string">"org.apache.kafka.common.serialization.IntegerDeserializer"</span>);</span><br><span class="line">        properties.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG,</span><br><span class="line">               <span class="string">"org.apache.kafka.common.serialization.StringDeserializer"</span>);</span><br><span class="line">        <span class="keyword">this</span>.consumer = <span class="keyword">new</span> KafkaConsumer&lt;Integer, String&gt;(properties);</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">doWork</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  <span class="comment">// 指定要消费的主题</span></span><br><span class="line">  consumer.subscribe(Collections.singletonList(<span class="string">"cities"</span>));</span><br><span class="line">  ConsumerRecords&lt;Integer, String&gt; records = consumer.poll(<span class="number">1000</span>);</span><br><span class="line">  <span class="keyword">for</span>(ConsumerRecord record : records) &#123;</span><br><span class="line">    System.out.print(<span class="string">"topic = "</span> + record.topic());</span><br><span class="line">    System.out.print(<span class="string">" partition = "</span> + record.partition());</span><br><span class="line">    System.out.print(<span class="string">" key = "</span> + record.key());</span><br><span class="line">    System.out.println(<span class="string">" value = "</span> + record.value());</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">      <span class="comment">// 带回调功能的手动异步提交</span></span><br><span class="line">      consumer.commitAsync((offsets, e) -&gt; &#123;</span><br><span class="line">        <span class="keyword">if</span> (e != <span class="keyword">null</span>) &#123;</span><br><span class="line">          System.out.print(<span class="string">"提交失败，offsets = "</span> + offsets);</span><br><span class="line">          System.out.println(<span class="string">"，exception = "</span> + e);</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;);</span><br><span class="line">    &#125;<span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">      e.printStackTrace();</span><br><span class="line">      <span class="comment">// 同步提交</span></span><br><span class="line">      consumer.commitSync();</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="kafka如何保证数据不丢失"><a href="#kafka如何保证数据不丢失" class="headerlink" title="kafka如何保证数据不丢失"></a><strong>kafka如何保证数据不丢失</strong></h2><ul>
+<li><p>生产者数据的不丢失</p>
+<ul>
+<li><p>同步模式</p>
+<p>​    request.required.acks = 1(follower 未同步数据)/-1(follower同步完数据,但效率低)</p>
+</li>
+<li><p>异步模式</p>
+<p>通过设置时间阈值和消息数量阈值, 并且设置为阻塞模式</p>
+<p>producer.type=async </p>
+<p>request.required.acks=1 </p>
+<p>queue.buffering.max.ms=5000 </p>
+<p>queue.buffering.max.messages=10000 </p>
+<p>queue.enqueue.timeout.ms = -1 </p>
+<p>batch.num.messages=200</p>
+</li>
+</ul>
+</li>
+<li><p>消费者的数据不丢失</p>
+<p>通过offset commit 来保证数据的不丢失，kafka自己记录了每次消费的offset数值，下次继续消费的时候，接着上次的offset进行消费即可</p>
+</li>
+</ul>
+<h2 id="kafka性能到底好在哪儿"><a href="#kafka性能到底好在哪儿" class="headerlink" title="kafka性能到底好在哪儿"></a>kafka性能到底好在哪儿</h2><ul>
+<li><p>采用<strong>BIO</strong>, 虽AIO性能更好, 但是编程难度较大</p>
+</li>
+<li><p>高性能的网络设计</p>
+</li>
+<li><p>顺序写</p>
+<p> 客户端写数据—-&gt; 操作系统缓存 —-&gt; 写入磁盘(<strong>顺序写</strong>), 如果磁盘的个数和转数跟得上的话, 都快赶上写内存的速度了.</p>
+</li>
+<li><p>跳表, 稀松索引, 零拷贝</p>
+</li>
+</ul>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="en">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/01/16/rabbitMQ/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -738,12 +1049,12 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">3</span>
+          <span class="site-state-item-count">4</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
       <div class="site-state-item site-state-tags">
-        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-count">4</span>
         <span class="site-state-item-name">tags</span>
       </div>
   </nav>
