@@ -175,6 +175,221 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/03/09/ElasticSearch/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="Chris Shang">
+      <meta itemprop="description" content="Java, Architect">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Architect">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/03/09/ElasticSearch/" class="post-title-link" itemprop="url">ElasticSearch</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+              
+
+              <time title="Created: 2020-03-09 15:47:53 / Modified: 16:23:25" itemprop="dateCreated datePublished" datetime="2020-03-09T15:47:53+08:00">2020-03-09</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="ES-vs-Solr"><a href="#ES-vs-Solr" class="headerlink" title="ES vs Solr"></a>ES vs Solr</h2><ul>
+<li><p>对已有数据进行搜索,Solr更快</p>
+</li>
+<li><p>实时建立索引时,solr会发生阻塞,ES具有明显的优势</p>
+</li>
+<li><p>随着数据量的增加,Solr的效率会变低,而ES没有明显的变化</p>
+</li>
+<li><p>Solr利用ZK进行分布式管理,而ES自身带有分布式协调管理功能</p>
+</li>
+<li><p>Solr支持的数据格式更多,ES只支持JSON</p>
+</li>
+<li><p>ES是对Lucene进行封装, 用restful的形式去调用, 同时还考虑了海量数据, 实现了分布式, 是一个可以存储海量数据的分布式搜索引擎;</p>
+</li>
+</ul>
+<h2 id="分析文档"><a href="#分析文档" class="headerlink" title="分析文档"></a><strong>分析文档</strong></h2><ol>
+<li><p>分析文档主要是对Field域进行分析,分析文档的目的是为了索引</p>
+</li>
+<li><p>分析文档主要通过分词组件(Tokenizer)和语言处理组件(Linguistic Processor)完成</p>
+<p><strong>分词组件</strong></p>
+<ul>
+<li><p>将Field域中的内容进行分词(不同语言有不同的分词规则)</p>
+</li>
+<li><p>去除标点符号</p>
+</li>
+<li><p>去除停用词(stop word)</p>
+</li>
+<li><p><strong>分词(Tokenize)</strong>之后得到的结果成为词元(<strong>Token</strong>), 对于每一种语言的分词组件(<strong>Tokenizer</strong>)都有一个停词(stop word)集合, the, a, this等</p>
+</li>
+</ul>
+<p><strong>将得到的词元传递给语言处理组件(Linguistic Processor),语言处理组件一般做以下几点:</strong></p>
+<ul>
+<li><p>变为小写(lowercase)</p>
+</li>
+<li><p>将单词缩减为词根形式, 如cars到car, 这种操作称为stemming</p>
+</li>
+<li><p>将单词转变为词根形式, 如drove到drive等, 这种操作称为lemmatization </p>
+</li>
+</ul>
+<p><strong>语言处理组件得到的结果称为term</strong></p>
+</li>
+</ol>
+<h2 id="索引文档"><a href="#索引文档" class="headerlink" title="索引文档"></a><strong>索引文档</strong></h2><ol>
+<li><p>索引的目的是为了搜索</p>
+</li>
+<li><p>将得到的term传给<strong>索引(Indexer)组件</strong>, 索引组件主要做以下几件事情:</p>
+<ul>
+<li><p>创建term字典</p>
+</li>
+<li><p>排序term字典</p>
+</li>
+<li><p>合并term字典(合并相同的词成为文档倒排链表)</p>
+</li>
+<li><p>最终的索引结构是一种<strong>倒排索引结构</strong>也叫<strong>反向索引结构</strong>, 包括索引和文档两部分, 索引即词汇表,它的规模较小, 而文档集合较大</p>
+</li>
+</ul>
+</li>
+</ol>
+<h2 id="ES的高可用"><a href="#ES的高可用" class="headerlink" title="ES的高可用"></a><strong>ES的高可用</strong></h2><ul>
+<li><p>Master-slave架构, master负责集群状态信息的改变, 并同步给其他slave节点, ES会对数据进行拆分, 每一个分片(shards)会保存多个副本;</p>
+</li>
+<li><p>只有建立索引和类型(表)会通过master, 数据的写入有个routing规则, 可以route集群, 所以数据写入的压力是分散在整个集群的;</p>
+</li>
+<li><p>实际应用如(ELK), elasticsearch + logstash(日志收集系统) + kibana(数据可视化平台), 当集群中节点有上百个结点时, 排查日志肯定不能一个一个登录去看, 这时候logstash就起作用了. 还能对错误进行实时报警;</p>
+</li>
+</ul>
+<h2 id="ES倒排索引"><a href="#ES倒排索引" class="headerlink" title="ES倒排索引"></a><strong>ES倒排索引</strong></h2><p>最直白的理解, 就是我们之前背诵诗是背诵题目, 然后是诗的内容. 但是如诗词大会飞花令直接背诵包含某个字如”雪”, “风”的诗却很难想起来. 倒排索引就是以诗中的每个字,作为索引. poem{name: <strong>keyword</strong>, author: <strong>keyword</strong>, dynasty: <strong>keyword</strong>, content: <strong>text</strong>}</p>
+<p><img src="/2020/03/09/ElasticSearch/ES%E7%BB%93%E6%9E%84.png" alt="ES倒排索引"></p>
+<h2 id="ES的Analyzer"><a href="#ES的Analyzer" class="headerlink" title="ES的Analyzer"></a><strong>ES的Analyzer</strong></h2><p>shopstyle主要是对fts的搜索, index时把productName, retailerName, category tag, brand name, material, color, description等信息copy到fts_text字段中; 然后通过自定义的<strong>analyzer(索引时应用的分析器)</strong> 和<strong>search_analyzer(搜索时用的分析器)</strong>进行索引和查询.</p>
+<p>自定义<strong>analyzer</strong>分三个功能:</p>
+<ul>
+<li><p><strong>char_filter(0个或多个)</strong>: 分词前对对字符串进行按字符进行过滤; char_filter 也可以自定义, 共有三种类型自定义的char_filter, “char_filter”:{“<strong>my_char_filter</strong>”{“type”: “<strong>mapping</strong>”, “<strong>mappings</strong>”:[“curry =&gt; 库里”]}}, 除此之外还有<strong>pattern</strong>(正则)过滤, 和<strong>html strip filter</strong></p>
+</li>
+<li><p><strong>tokenizer</strong>(分词器, 有且只有一个): 接收字符流, 输出token流. 有十几种. shopstyle使用了<strong>classic</strong>, <strong>a.</strong> 分割”符号+空格” <strong>b.</strong> 拆分连字符, 除token中有一个数字, 这种情况下, token被翻译为产品编号. <strong>c.</strong>把email和 hostname当做一个token; 还使用了<strong>keyword</strong>的tokenizer, 不会被拆分;</p>
+</li>
+<li><p><strong>token filter(0个或多个)</strong>: token过滤器, 有 lowercase token filter(转小写), stop token filter(删除停用词), 自定义 filter, 继承TokenFilter类,  </p>
+</li>
+</ul>
+<h2 id="ES优化"><a href="#ES优化" class="headerlink" title="ES优化"></a><strong>ES优化</strong></h2><ul>
+<li><p>ssd硬盘</p>
+</li>
+<li><p>routing</p>
+</li>
+<li><p>分别查询和合并查询</p>
+</li>
+<li><p>避免使用range查询</p>
+</li>
+<li><p>JVM GC的选择</p>
+</li>
+</ul>
+<p><strong>ES优化问题:</strong></p>
+<ul>
+<li><p>第一次搜索的时候，是5~10s，后面反而就快了，可能就几百毫秒?</p>
+<p>往ES里index的数据, 实际上都是写到磁盘文件中去了, 查询的时候操作系统会将磁盘文件里的数据自动缓存到FileSystem Cache里面去.ES严重依赖这个cache, 所以FileSystemCache分配的内存要占到机器内存的一半.</p>
+</li>
+<li><p>只有需要搜索的字段再index到ES中(当然必须包括id), 查出来id之后再去其他数据库中查完整的数据.</p>
+</li>
+<li><p>如果数据量实在太大, FileSystem Cache无论如何也容纳不了一半的数据, 那么就需要<strong>数据预热</strong>, 对热门搜索要定时刷到cache中.</p>
+</li>
+<li><p><strong>冷热分离</strong>. 热门搜索数据要放到不同的机器上.</p>
+</li>
+<li><p><strong>避免</strong>join/nested/parent-child搜索, 能在代码中完成尽量在代码中完成</p>
+</li>
+<li><p><strong>减少分页</strong>, 使用<strong>Scroll API</strong>代替(正常ES会维护之前翻页的上下文信息, 但是不能维护时间太长,浪费资源, 该api会设定一个存储的时间), 或者<strong>search_after</strong>来代替.shopstyle是将scroll调用的api和search的api进行分离. search_after与scroll api很相似, 但是search_after是无状态的. search_after举例:</p>
+<p>首先要理解 search_after 这个功能；<br>例如你现在需要安装id 和 time 进行排序；<br>你获取了第一页的结果后，现在需要获取第二页内容<br>你需要使用第一页最后一条的id 和 time，作为 search_after 的参数chuan传递到查询请求中。<br>下面是样例：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">SearchAfterBuilder searchAfterBuilder = <span class="keyword">new</span> SearchAfterBuilder(); </span><br><span class="line">searchAfterBuilder.setSortValues(<span class="keyword">new</span> Object[]&#123;<span class="string">"上一页的ID"</span>, <span class="string">"上一页的时间"</span>&#125;);</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h2 id="ES索引与搜索"><a href="#ES索引与搜索" class="headerlink" title="ES索引与搜索"></a>ES索引与搜索</h2><h3 id="索引时analyzer顺序"><a href="#索引时analyzer顺序" class="headerlink" title="索引时analyzer顺序"></a>索引时analyzer顺序</h3><ol>
+<li><p>mapping字段中定义的分词器</p>
+</li>
+<li><p>索引设置中命名为”default”的分词器</p>
+</li>
+<li><p>Standard analyzer</p>
+</li>
+</ol>
+<h3 id="查询时analyzer顺序"><a href="#查询时analyzer顺序" class="headerlink" title="查询时analyzer顺序"></a>查询时analyzer顺序</h3><ol>
+<li><p>Full-text query中的分词器</p>
+</li>
+<li><p>定义在mapping字段中的search_analyzer</p>
+</li>
+<li><p>定义在mapping字段中的analyzer</p>
+</li>
+<li><p>索引设置中命名为”default_search”的分词器</p>
+</li>
+<li><p>索引设置中命名为”default”的分词器</p>
+</li>
+<li><p>Standard analyzer</p>
+</li>
+</ol>
+<h2 id="mapping文件中一些参数的设置需要注意的点"><a href="#mapping文件中一些参数的设置需要注意的点" class="headerlink" title="mapping文件中一些参数的设置需要注意的点"></a>mapping文件中一些参数的设置需要注意的点</h2><ul>
+<li><p><strong>copy_to</strong>, 不能通过中间值来复制, 如不能把field1 copy 给field2, 然后再通过field copy给field3. 但是可以同时将field1 copy给field3</p>
+</li>
+<li><p><strong>doc_values</strong>: 如果确定不需要通过该字段进行排序或聚合, 就将该值设置为false. 能节省磁盘空间. text 类型的字段不支持该值(所以如果想让该字段支持排序或聚合, 就应该设置一个innerfield,类型为keyword)</p>
+</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">&quot;mappings&quot;: &#123;</span><br><span class="line">  	&quot;properties&quot;: &#123;</span><br><span class="line">  	&quot;my_field&quot;: &#123; </span><br><span class="line">			&quot;type&quot;: &quot;text&quot;,</span><br><span class="line">			&quot;fields**&quot;: &#123;</span><br><span class="line">				&quot;keyword&quot;: &#123; </span><br><span class="line">				&quot;type&quot;: &quot;**keyword**&quot; &#125;&#125;&#125;&#125;&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<ul>
+<li><p><strong>dynamic</strong>: 是否允许动态添加新字段(不在mapping文件中的字段), false(不允许), true(允许), strict(报错)</p>
+</li>
+<li><p><strong>fields</strong>:(multi-field) a string field could be mapped as a <strong>text</strong> field for <strong>full-text search</strong>, and as a <strong>keyword</strong> field for <strong>sorting or aggregations,</strong> 另外一种用途是可以将该字段以两种不同的分词器进行索引</p>
+</li>
+<li><p><strong>normalizer</strong>: 在index和搜索的时候对keyword类型的数据进行normalize处理.</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">"analysis": &#123;</span><br><span class="line">"normalizer": &#123;</span><br><span class="line">"my_normalizer": &#123;</span><br><span class="line">"type": "custom",</span><br><span class="line">  "filter": ["lowercase", "asciifolding"]&#125;&#125;&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>Asciifolding</strong>: 作用是去掉变音符号(如法语)并且能把Unicode字符转化为ASCII来表示.</p>
+</li>
+<li><p>store: 是否存储该字段的原始值.在某些情况下是有用的, 如果你有一个带有标题、日期和一个非常大的内容字段的文档，你可能希望只检索标题和日期，而不必从一个大的源字段中提取这些字段, 如把title和date设置为:store: true.搜索的时候只检索title和date</p>
+<p>GET my_index/_search{</p>
+<p>  “<strong>stored_fields</strong>“: [ “title”, “date” ] }</p>
+</li>
+<li><p><strong>similarity</strong>: 相似度算法, 共有三个值, BM25, classic(tf/idf算法), boolean:当full-text ranking不需要的时候, 并且分数只和是否匹配相关. boolean的similarity会给term一个和query的boost相等的分数.</p>
+</li>
+</ul>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="en">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/01/20/spring-cloud/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1624,12 +1839,12 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">6</span>
+          <span class="site-state-item-count">7</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
       <div class="site-state-item site-state-tags">
-        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-count">6</span>
         <span class="site-state-item-name">tags</span>
       </div>
   </nav>
