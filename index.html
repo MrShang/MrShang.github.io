@@ -175,6 +175,63 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/01/20/spring-cloud/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="Chris Shang">
+      <meta itemprop="description" content="Java, Architect">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Architect">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/01/20/spring-cloud/" class="post-title-link" itemprop="url">spring cloud</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2020-01-20 16:36:10" itemprop="dateCreated datePublished" datetime="2020-01-20T16:36:10+08:00">2020-01-20</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="en">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/01/20/redis/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -198,10 +255,16 @@
                 <i class="fa fa-calendar-o"></i>
               </span>
               <span class="post-meta-item-text">Posted on</span>
-              
 
-              <time title="Created: 2020-01-20 15:04:45 / Modified: 16:08:05" itemprop="dateCreated datePublished" datetime="2020-01-20T15:04:45+08:00">2020-01-20</time>
+              <time title="Created: 2020-01-20 15:04:45" itemprop="dateCreated datePublished" datetime="2020-01-20T15:04:45+08:00">2020-01-20</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2020-03-09 15:45:57" itemprop="dateModified" datetime="2020-03-09T15:45:57+08:00">2020-03-09</time>
+              </span>
 
           
 
@@ -635,26 +698,37 @@
 <p><strong>问题:</strong> 在client1获取锁之后, 由于某种原因发生<strong>系统停顿</strong>, 锁过期, 然后client1执行操作; client2这时候也会拿到锁, 就会出现问题)</p>
 <p><strong>问题:</strong> A, B, C, D, E 5个redis节点,如果C的时间走得快, client1拿到锁(A, B, C), C节点先过期, client2又拿到了(C, D, E)这样就出问题了;</p>
 <p>所以Redis从根本上来说是AP, 而分布式锁是要求CP的.</p>
-<h2 id="redis各种数据类型的数据结构"><a href="#redis各种数据类型的数据结构" class="headerlink" title="redis各种数据类型的数据结构"></a>redis各种数据类型的数据结构</h2><p>Redis的底层数据结构有以下几种：</p>
-<ul>
+<h2 id="redis各种数据类型的数据结构"><a href="#redis各种数据类型的数据结构" class="headerlink" title="redis各种数据类型的数据结构"></a>redis各种数据类型的数据结构</h2><h3 id="Redis的底层数据结构"><a href="#Redis的底层数据结构" class="headerlink" title="Redis的底层数据结构"></a>Redis的底层数据结构</h3><ul>
 <li>简单动态字符串sds(Simple Dynamic String)</li>
 <li>双端链表(LinkedList)</li>
 <li>字典(Map)</li>
 <li>跳跃表(SkipList)</li>
 </ul>
-<p>redis各种数据类型使用的数据结构:</p>
-<ul>
-<li><p><strong>String</strong>, <strong>SDS</strong>(simple dynamic string) 简单动态字符串, 包含len(字符串长度), free(空闲的字节数量), buf(字节数组,存储数据)</p>
-</li>
-<li><p><strong>List</strong>, 使用<strong>压缩列表</strong>(数据集比较少的时候, 列表中单个数据小于64字节或者列表中数据个数少于512个)和<strong>双向循环链表</strong>, 包含pre, next, value</p>
-</li>
-<li><p><strong>hash</strong>, 使用<strong>压缩列表</strong>(键和值的大小小于64字节, 列表中键值对个数小于512个)和<strong>散列表</strong></p>
-</li>
-<li><p><strong>Set</strong>, <strong>有序数组</strong>(个数不超过512)和<strong>散列表</strong></p>
-</li>
-<li><p><strong>Zset</strong>, <strong>压缩列表</strong>(数据小于64字节或者个数小于128个)和<strong>跳跃表</strong></p>
-</li>
+<h3 id="redis各种数据类型使用的数据结构"><a href="#redis各种数据类型使用的数据结构" class="headerlink" title="redis各种数据类型使用的数据结构"></a>redis各种数据类型使用的数据结构</h3><ul>
+<li><strong>String</strong>, <strong>SDS</strong>(simple dynamic string) 简单动态字符串, 包含len(字符串长度), free(空闲的字节数量), buf(字节数组,存储数据)</li>
+<li><strong>List</strong>, 使用<strong>压缩列表</strong>(数据集比较少的时候, 列表中单个数据小于64字节或者列表中数据个数少于512个)和<strong>双向循环链表</strong>, 包含pre, next, value</li>
+<li><strong>hash</strong>, 使用<strong>压缩列表</strong>(键和值的大小小于64字节, 列表中键值对个数小于512个)和<strong>散列表</strong></li>
+<li><strong>Set</strong>, <strong>有序数组</strong>(个数不超过512)和<strong>散列表</strong></li>
+<li><strong>Zset</strong>, <strong>压缩列表</strong>(数据小于64字节或者个数小于128个)和<strong>跳跃表</strong></li>
 </ul>
+<h3 id="用ziplist代替key-value减少80-内存占用的案例"><a href="#用ziplist代替key-value减少80-内存占用的案例" class="headerlink" title="用ziplist代替key-value减少80%内存占用的案例"></a>用ziplist代替key-value减少80%内存占用的案例</h3><p>​    <strong>背景:</strong> 因业务原因, 需要大量存储key-value数据, key和value都为string, 如果存储1千万条数据，占用了redis共计1.17G的内存. 当数据量变成1个亿时，实测大约占用8个G. 但是修改为key(int), value 为ziplist时, 内存占用为123M, 减少了85%.</p>
+<p>​    <strong>步骤:</strong></p>
+<ol>
+<li><p>要将1千万个键值对, 放到N个bucket中, 但是为了防止ziplist变为hashtable, 每个bucket不能超过512个键值对, 1千万 / 512 = 19531. 将所有key hash到所有bucket中, 但由于hash函数的不确定性, 可能出现不均等分配, 可以分配25000个bucket, 或者30000个bucket.</p>
+</li>
+<li><p>选用hash算法, 决定将key放到哪个bucket. 这里我们采用高效而且均衡的知名算法crc32. 通过获取原有md5(key)的crc32后, 再对bucket的数量进行取余.</p>
+</li>
+<li><p>第2步确定了外层的key, 内部的field我们选用bkdr哈希算法.</p>
+<p>​    </p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">int</span> <span class="title">BKDRHash</span><span class="params">(String str)</span> </span>&#123;</span><br><span class="line">  <span class="keyword">int</span> seed = <span class="number">131</span>;</span><br><span class="line">  <span class="keyword">int</span> hash = <span class="number">0</span>;</span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; str.length; i++) &#123;</span><br><span class="line">    hash = (hash * seed) + str.charAt(i);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> (hash &amp; <span class="number">0X7FFFFFFF</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>测试</p>
+<p>装入1000万条数据, 内存降低了85%; </p>
+<p>查询测试, 查100万条数据, 对比查询速度:</p>
+<p> key-value耗时：10653、10790、11318、9900、11270、11029毫秒</p>
+<p> hash-field耗时：12042、11349、11126、11355、11168毫秒</p>
+</li>
+</ol>
 <h2 id="持续更新-注"><a href="#持续更新-注" class="headerlink" title="持续更新(注)"></a>持续更新(注)</h2><p>该篇blog并不代表该知识点的所有内容, 在今后的工作学习中, <strong><font color="#dd0000">持续更新</font></strong>! 如对blog中的观点有异议/建议,请发送email至: <span class="exturl" data-url="bWFpbHRvOnNoY2hhb3NodWFpQGZveG1haWwuY29t" title="mailto:shchaoshuai@foxmail.com">shchaoshuai@foxmail.com<i class="fa fa-external-link"></i></span>, 感谢您的阅读.</p>
 
       
@@ -1550,7 +1624,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">5</span>
+          <span class="site-state-item-count">6</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
