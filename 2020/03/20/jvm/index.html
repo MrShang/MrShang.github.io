@@ -26,7 +26,7 @@
     scheme: 'Muse',
     version: '7.7.0',
     exturl: true,
-    sidebar: {"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},
+    sidebar: {"position":"left","display":"always","padding":18,"offset":12,"onmobile":false},
     copycode: {"enable":false,"show_result":false,"style":null},
     back2top: {"enable":true,"sidebar":false,"scrollpercent":false},
     bookmark: {"enable":false,"color":"#222","save":"auto"},
@@ -61,7 +61,7 @@
 <meta property="og:image" content="http://yoursite.com/2020/03/20/jvm/Java%E7%BC%96%E8%AF%91%E5%99%A8%E5%92%8C%E8%A7%A3%E9%87%8A%E5%99%A8%E7%9A%84%E5%8D%8F%E5%90%8C%E5%B7%A5%E4%BD%9C%E6%B5%81%E7%A8%8B.png">
 <meta property="og:image" content="http://yoursite.com/2020/03/20/jvm/%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E5%99%A8.png">
 <meta property="article:published_time" content="2020-03-20T00:37:05.000Z">
-<meta property="article:modified_time" content="2020-03-21T04:59:01.400Z">
+<meta property="article:modified_time" content="2020-03-21T05:18:53.850Z">
 <meta property="article:author" content="Chris Shang">
 <meta property="article:tag" content="JVM">
 <meta name="twitter:card" content="summary">
@@ -166,6 +166,7 @@
     <i class="fa fa-arrow-up"></i>
     <span>0%</span>
   </div>
+  <div class="reading-progress-bar"></div>
 
 
     <main class="main">
@@ -211,7 +212,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2020-03-21 12:59:01" itemprop="dateModified" datetime="2020-03-21T12:59:01+08:00">2020-03-21</time>
+                <time title="Modified: 2020-03-21 13:18:53" itemprop="dateModified" datetime="2020-03-21T13:18:53+08:00">2020-03-21</time>
               </span>
 
           
@@ -526,6 +527,7 @@
 <p>首先排序各个Region的回收价值和成本；</p>
 <p>然后根据用户期望的GC停顿时间来制定回收计划；</p>
 <p>最后按计划回收一些价值高的Region中垃圾对象；</p>
+<h2 id="持续更新-注"><a href="#持续更新-注" class="headerlink" title="持续更新(注)"></a>持续更新(注)</h2><p>该篇blog并不代表该知识点的所有内容, 在今后的工作学习中, <strong><font color="#dd0000">持续更新</font></strong>! 如对blog中的观点有异议/建议,请发送email至: <span class="exturl" data-url="bWFpbHRvOnNoY2hhb3NodWFpQGZveG1haWwuY29t" title="mailto:shchaoshuai@foxmail.com">shchaoshuai@foxmail.com<i class="fa fa-external-link"></i></span>, 感谢您的阅读.</p>
 
     </div>
 
@@ -627,7 +629,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#jvm基础"><span class="nav-number">1.</span> <span class="nav-text">jvm基础</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#jvm类加载子系统"><span class="nav-number">2.</span> <span class="nav-text">jvm类加载子系统</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#类加载的时机"><span class="nav-number">2.1.</span> <span class="nav-text">类加载的时机</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#加载"><span class="nav-number">2.2.</span> <span class="nav-text">加载</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#连接"><span class="nav-number">2.3.</span> <span class="nav-text">连接</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#验证"><span class="nav-number">2.3.1.</span> <span class="nav-text">验证</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#准备"><span class="nav-number">2.3.2.</span> <span class="nav-text">准备</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#解析"><span class="nav-number">2.3.3.</span> <span class="nav-text">解析</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#初始化"><span class="nav-number">2.4.</span> <span class="nav-text">初始化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#使用"><span class="nav-number">2.5.</span> <span class="nav-text">使用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#卸载"><span class="nav-number">2.6.</span> <span class="nav-text">卸载</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#类加载器"><span class="nav-number">3.</span> <span class="nav-text">类加载器</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#jvm运行时数据区"><span class="nav-number">4.</span> <span class="nav-text">jvm运行时数据区</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#jvm执行引擎"><span class="nav-number">5.</span> <span class="nav-text">jvm执行引擎</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#GC垃圾回收"><span class="nav-number">6.</span> <span class="nav-text">GC垃圾回收</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#JVM对象的引用类型"><span class="nav-number">7.</span> <span class="nav-text">JVM对象的引用类型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#jvm优化"><span class="nav-number">8.</span> <span class="nav-text">jvm优化</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#垃圾回收器"><span class="nav-number">9.</span> <span class="nav-text">垃圾回收器</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#jvm基础"><span class="nav-number">1.</span> <span class="nav-text">jvm基础</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#jvm类加载子系统"><span class="nav-number">2.</span> <span class="nav-text">jvm类加载子系统</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#类加载的时机"><span class="nav-number">2.1.</span> <span class="nav-text">类加载的时机</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#加载"><span class="nav-number">2.2.</span> <span class="nav-text">加载</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#连接"><span class="nav-number">2.3.</span> <span class="nav-text">连接</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#验证"><span class="nav-number">2.3.1.</span> <span class="nav-text">验证</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#准备"><span class="nav-number">2.3.2.</span> <span class="nav-text">准备</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#解析"><span class="nav-number">2.3.3.</span> <span class="nav-text">解析</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#初始化"><span class="nav-number">2.4.</span> <span class="nav-text">初始化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#使用"><span class="nav-number">2.5.</span> <span class="nav-text">使用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#卸载"><span class="nav-number">2.6.</span> <span class="nav-text">卸载</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#类加载器"><span class="nav-number">3.</span> <span class="nav-text">类加载器</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#jvm运行时数据区"><span class="nav-number">4.</span> <span class="nav-text">jvm运行时数据区</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#jvm执行引擎"><span class="nav-number">5.</span> <span class="nav-text">jvm执行引擎</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#GC垃圾回收"><span class="nav-number">6.</span> <span class="nav-text">GC垃圾回收</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#JVM对象的引用类型"><span class="nav-number">7.</span> <span class="nav-text">JVM对象的引用类型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#jvm优化"><span class="nav-number">8.</span> <span class="nav-text">jvm优化</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#垃圾回收器"><span class="nav-number">9.</span> <span class="nav-text">垃圾回收器</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#持续更新-注"><span class="nav-number">10.</span> <span class="nav-text">持续更新(注)</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
