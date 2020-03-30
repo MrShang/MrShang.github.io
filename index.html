@@ -802,7 +802,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2020-03-13 11:03:44" itemprop="dateModified" datetime="2020-03-13T11:03:44+08:00">2020-03-13</time>
+                <time title="Modified: 2020-03-25 07:14:06" itemprop="dateModified" datetime="2020-03-25T07:14:06+08:00">2020-03-25</time>
               </span>
 
           
@@ -919,7 +919,7 @@
 <li><p><strong>避免</strong>join/nested/parent-child搜索, 能在代码中完成尽量在代码中完成</p>
 </li>
 <li><p><strong>减少分页</strong>, 使用<strong>Scroll API</strong>代替(正常ES会维护之前翻页的上下文信息, 但是不能维护时间太长,浪费资源, 该api会设定一个存储的时间), 或者<strong>search_after</strong>来代替.shopstyle是将scroll调用的api和search的api进行分离. search_after与scroll api很相似, 但是search_after是无状态的. search_after举例:</p>
-<p>首先要理解 search_after 这个功能；<br>例如你现在需要安装id 和 time 进行排序；<br>你获取了第一页的结果后，现在需要获取第二页内容<br>你需要使用第一页最后一条的id 和 time，作为 search_after 的参数chuan传递到查询请求中。<br>下面是样例：</p>
+<p>首先要理解 search_after 这个功能；<br>例如你现在需要按照id 和 time 进行排序；<br>你获取了第一页的结果后，现在需要获取第二页内容<br>你需要使用第一页最后一条的id 和 time，作为 search_after 的参数chuan传递到查询请求中。<br>下面是样例：</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">SearchAfterBuilder searchAfterBuilder = <span class="keyword">new</span> SearchAfterBuilder(); </span><br><span class="line">searchAfterBuilder.setSortValues(<span class="keyword">new</span> Object[]&#123;<span class="string">"上一页的ID"</span>, <span class="string">"上一页的时间"</span>&#125;);</span><br></pre></td></tr></table></figure>
 
 </li>
@@ -1081,7 +1081,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2020-03-09 15:45:57" itemprop="dateModified" datetime="2020-03-09T15:45:57+08:00">2020-03-09</time>
+                <time title="Modified: 2020-03-30 11:18:15" itemprop="dateModified" datetime="2020-03-30T11:18:15+08:00">2020-03-30</time>
               </span>
 
           
@@ -1547,6 +1547,46 @@
 <p> hash-field耗时：12042、11349、11126、11355、11168毫秒</p>
 </li>
 </ol>
+<h2 id="Redis高延迟原因"><a href="#Redis高延迟原因" class="headerlink" title="Redis高延迟原因"></a>Redis高延迟原因</h2><p>redis命令执行过程</p>
+<p><img src="/2020/01/20/redis/redis%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C%E8%BF%87%E7%A8%8B.png" alt="redis命令执行过程"></p>
+<p>蓝色的表示可能发生高延迟的地方</p>
+<p>redis提供的慢查询统计功能: slowlog get {n}, 默认返回执行超过10ms(可配置)的命令.</p>
+<ul>
+<li>slowlog-log-slower-than, 配置超过几毫秒的数据被记录到慢查询队列中</li>
+<li>慢查询队列的最大长度: slowlog-max-len</li>
+</ul>
+<p>slowlog get会返回值如下: </p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&gt; slowlog <span class="built_in">get</span></span><br><span class="line"></span><br><span class="line"><span class="number">1</span>) (integer) <span class="number">26</span> # 在慢日志中的序列号</span><br><span class="line"><span class="number">2</span>) (integer) <span class="number">1450253133</span> # 该记录执行的系统时间</span><br><span class="line"><span class="number">3</span>) (integer) <span class="number">43097</span> # 该记录执行所消耗的时间</span><br><span class="line"><span class="number">4</span>) <span class="string">"flushdb"</span> # 执行的操作</span><br></pre></td></tr></table></figure>
+
+<p>redis高延迟原因</p>
+<ul>
+<li><p><strong>不合理的命令或者数据结构</strong></p>
+<p>避免使用<strong>hgetall</strong>操作, redis提供发现各种数据结构中大对象的工具, redis-cli-h {ip} -p {port} bigkeys</p>
+</li>
+<li><p><strong>持久化阻塞</strong></p>
+<p>开启了持久化操作的redis, 当执行fork和AOF时会引起阻塞</p>
+<ul>
+<li><p>fork阻塞</p>
+<p>fork 操作发生在 RDB 和 AOF 重写时, Redis 主线程调用 fork 操作产生共享内存的子进程, 由子进程完成对应的持久化工作. 如果 fork 操作本身耗时过长, 必然会导致主线程的阻塞。</p>
+</li>
+<li><p>AOF阻塞</p>
+<p>当我们开启AOF持久化功能时，文件刷盘的方式一般采用每秒一次, 后台线程每秒对AOF文件做 fsync 操作. 当硬盘压力过大时, fsync 操作需要等待，直到写入完成.</p>
+</li>
+<li><p>内存交换</p>
+<p>内存交换(swap)对于 Redis 来说是非常致命的, Redis 保证高性能的一个重要前提是所有的数据在内存中. 如果操作系统把 Redis 使用的部分内存换出到硬盘, 由于内存与硬盘读写速度差几个数量级, 会导致发生交换后的 Redis 性能急剧下降. 识别 Redis 内存交换的检查方法如下:</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&gt;redis-cli -p <span class="number">6383</span> info server | grep process_id # 查询 redis 进程号</span><br><span class="line">&gt;cat /proc/<span class="number">4476</span>/smaps | grep Swap # 查询内存交换大小</span><br><span class="line">Swap: <span class="number">0</span> kB</span><br><span class="line">Swap: <span class="number">4</span> kB</span><br><span class="line">Swap: <span class="number">0</span> kB</span><br><span class="line">Swap: <span class="number">0</span> kB</span><br></pre></td></tr></table></figure>
+
+<p>如果交换量都是0KB或者个别的是4KB, 则是正常现象, 说明Redis进程内存没有被交换</p>
+<p>有很多方法可以避免内存交换的发生:</p>
+<ul>
+<li>保证机器充足的可用内存</li>
+<li>确保所有Redis实例设置最大可用内存(maxmemory), 防止极端情况下Redis内存不可控的增长</li>
+<li>降低系统使用swap优先级, 如 echo10&gt;/proc/sys/vm/swappiness</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
 <h2 id="持续更新-注"><a href="#持续更新-注" class="headerlink" title="持续更新(注)"></a>持续更新(注)</h2><p>该篇blog并不代表该知识点的所有内容, 在今后的工作学习中, <strong><font color="#dd0000">持续更新</font></strong>! 如对blog中的观点有异议/建议,请发送email至: <span class="exturl" data-url="bWFpbHRvOnNoY2hhb3NodWFpQGZveG1haWwuY29t" title="mailto:shchaoshuai@foxmail.com">shchaoshuai@foxmail.com<i class="fa fa-external-link"></i></span>, 感谢您的阅读.</p>
 
       
@@ -1985,7 +2025,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2020-01-19 16:03:13" itemprop="dateModified" datetime="2020-01-19T16:03:13+08:00">2020-01-19</time>
+                <time title="Modified: 2020-03-25 10:58:46" itemprop="dateModified" datetime="2020-03-25T10:58:46+08:00">2020-03-25</time>
               </span>
 
           
@@ -2064,15 +2104,15 @@
 </li>
 </ul>
 <p><strong>问题解决:</strong></p>
-<p>​    生产者要等MQ返回ack之后才认为该消息发送成功*<em>, *</em>否则重试.(异步发送ack或nack信号, 不用等待)</p>
 <ul>
-<li><p>RabbitMQ是通过持久化和confirm机制(即生产者要等MQ返回ack); </p>
+<li><p>生产者要等MQ返回ack之后才认为该消息发送成功*<em>, *</em>否则重试.(异步发送ack或nack信号, 不用等待)</p>
 </li>
-<li><p>kafaka通过设置参数:</p>
-<p>replication.factor 参数：这个值必须大于 1，要求每个 partition 必须有至少 2 个副本</p>
-<p>min.insync.replicas 参数：这个值必须大于 1，这个是要求一个 leader 至少感知到有至少一个 follower 还跟自己保持联系，没掉队，这样才能确保 leader 挂了还有一个 follower</p>
-<p>acks=all：这个是要求每条数据，必须是写入所有 replica 之后，才能认为是写成功了</p>
-<p>retries=MAX（很大很大很大的一个值，无限次重试的意思）：这个是要求一旦写入失败，就无限重试</p>
+<li><p>RabbitMQ是通过持久化和confirm机制(即生产者要等MQ返回ack); </p>
+<p>kafaka通过设置参数:</p>
+<p>replication.factor 参数: 这个值必须大于 1，要求每个 partition 必须有至少 2 个副本</p>
+<p>min.insync.replicas 参数: 这个值必须大于 1，这个是要求一个 leader 至少感知到有至少一个 follower 还跟自己保持联系，没掉队，这样才能确保 leader 挂了还有一个 follower</p>
+<p>acks=all: 这个是要求每条数据，必须是写入所有 replica 之后，才能认为是写成功了</p>
+<p>retries=MAX（很大很大很大的一个值，无限次重试的意思): 这个是要求一旦写入失败，就无限重试</p>
 </li>
 <li><p>rabbitMQ和kafka关闭自动ack, 改为手动ack, 如果该消费者未提交ack, 那么MQ会分配其他消费者消费该消息;</p>
 </li>
@@ -2171,7 +2211,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2020-01-19 16:02:32" itemprop="dateModified" datetime="2020-01-19T16:02:32+08:00">2020-01-19</time>
+                <time title="Modified: 2020-03-25 13:01:51" itemprop="dateModified" datetime="2020-03-25T13:01:51+08:00">2020-03-25</time>
               </span>
 
           
@@ -2220,11 +2260,14 @@
 <li><strong>Transaction Manager(TM):</strong> 定义了事务的范围(一般是业务层), 用来<strong>开启/提交/回滚</strong>一个整体事务</li>
 <li><strong>Resource Manager(RM):</strong> 管理分支事务, 与TC进行协调注册分支事务并且汇报分支事务的状态, 驱动分支事务的提交或回滚</li>
 </ul>
-<h3 id="seata管理分布式事务的生命周期"><a href="#seata管理分布式事务的生命周期" class="headerlink" title="seata管理分布式事务的生命周期"></a>seata管理分布式事务的生命周期</h3><pre><code>1. TM向TC请求开启一个新的全局事务, TC生成一个代表该全局事务的XID
- 2. XID在整个microservice的整个调用链中都可见
- 3. RM把本地事务向TC注册为XID全局事务的一个分支
- 4. TM向TC请求XID全局事务的提交或回滚
- 5. TC驱动所有XID全局事务的提交或回滚</code></pre><h2 id="数据一致性"><a href="#数据一致性" class="headerlink" title="数据一致性"></a><strong>数据一致性</strong></h2><h3 id="数据不一致产生的原因"><a href="#数据不一致产生的原因" class="headerlink" title="数据不一致产生的原因"></a>数据不一致产生的原因</h3><ul>
+<h3 id="seata管理分布式事务的生命周期"><a href="#seata管理分布式事务的生命周期" class="headerlink" title="seata管理分布式事务的生命周期"></a>seata管理分布式事务的生命周期</h3><ol>
+<li>TM向TC请求开启一个新的全局事务, TC生成一个代表该全局事务的XID</li>
+<li>XID在整个microservice的整个调用链中都可见</li>
+<li>RM把本地事务向TC注册为XID全局事务的一个分支</li>
+<li>TM向TC请求XID全局事务的提交或回滚</li>
+<li>TC驱动所有XID全局事务的提交或回滚</li>
+</ol>
+<h2 id="数据一致性"><a href="#数据一致性" class="headerlink" title="数据一致性"></a><strong>数据一致性</strong></h2><h3 id="数据不一致产生的原因"><a href="#数据不一致产生的原因" class="headerlink" title="数据不一致产生的原因"></a>数据不一致产生的原因</h3><ul>
 <li><p>不同的DB(用户有UserDB, 商品有Product DB)</p>
 </li>
 <li><p>DB和缓存(商品有Product DB 和 Product Cache)</p>

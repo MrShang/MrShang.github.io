@@ -60,7 +60,7 @@
 <meta property="og:image" content="http://yoursite.com/2020/01/14/DistributeTransaction/TCC-sequence-chart.png">
 <meta property="og:image" content="http://yoursite.com/2020/01/14/DistributeTransaction/distribute-transaction-consistent.png">
 <meta property="article:published_time" content="2020-01-14T06:00:03.000Z">
-<meta property="article:modified_time" content="2020-01-19T08:02:32.369Z">
+<meta property="article:modified_time" content="2020-03-25T05:01:51.279Z">
 <meta property="article:author" content="Chris Shang">
 <meta property="article:tag" content="分布式">
 <meta name="twitter:card" content="summary">
@@ -211,7 +211,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2020-01-19 16:02:32" itemprop="dateModified" datetime="2020-01-19T16:02:32+08:00">2020-01-19</time>
+                <time title="Modified: 2020-03-25 13:01:51" itemprop="dateModified" datetime="2020-03-25T13:01:51+08:00">2020-03-25</time>
               </span>
 
           
@@ -267,11 +267,14 @@
 <li><strong>Transaction Manager(TM):</strong> 定义了事务的范围(一般是业务层), 用来<strong>开启/提交/回滚</strong>一个整体事务</li>
 <li><strong>Resource Manager(RM):</strong> 管理分支事务, 与TC进行协调注册分支事务并且汇报分支事务的状态, 驱动分支事务的提交或回滚</li>
 </ul>
-<h3 id="seata管理分布式事务的生命周期"><a href="#seata管理分布式事务的生命周期" class="headerlink" title="seata管理分布式事务的生命周期"></a>seata管理分布式事务的生命周期</h3><pre><code>1. TM向TC请求开启一个新的全局事务, TC生成一个代表该全局事务的XID
- 2. XID在整个microservice的整个调用链中都可见
- 3. RM把本地事务向TC注册为XID全局事务的一个分支
- 4. TM向TC请求XID全局事务的提交或回滚
- 5. TC驱动所有XID全局事务的提交或回滚</code></pre><h2 id="数据一致性"><a href="#数据一致性" class="headerlink" title="数据一致性"></a><strong>数据一致性</strong></h2><h3 id="数据不一致产生的原因"><a href="#数据不一致产生的原因" class="headerlink" title="数据不一致产生的原因"></a>数据不一致产生的原因</h3><ul>
+<h3 id="seata管理分布式事务的生命周期"><a href="#seata管理分布式事务的生命周期" class="headerlink" title="seata管理分布式事务的生命周期"></a>seata管理分布式事务的生命周期</h3><ol>
+<li>TM向TC请求开启一个新的全局事务, TC生成一个代表该全局事务的XID</li>
+<li>XID在整个microservice的整个调用链中都可见</li>
+<li>RM把本地事务向TC注册为XID全局事务的一个分支</li>
+<li>TM向TC请求XID全局事务的提交或回滚</li>
+<li>TC驱动所有XID全局事务的提交或回滚</li>
+</ol>
+<h2 id="数据一致性"><a href="#数据一致性" class="headerlink" title="数据一致性"></a><strong>数据一致性</strong></h2><h3 id="数据不一致产生的原因"><a href="#数据不一致产生的原因" class="headerlink" title="数据不一致产生的原因"></a>数据不一致产生的原因</h3><ul>
 <li><p>不同的DB(用户有UserDB, 商品有Product DB)</p>
 </li>
 <li><p>DB和缓存(商品有Product DB 和 Product Cache)</p>
