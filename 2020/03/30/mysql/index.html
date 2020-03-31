@@ -56,7 +56,7 @@
 <meta property="og:description" content="SQL语言分类 DDL: Data Definition Language 数据定义语言create， alter， drop等  DML: Data Manipulation Language 数据操纵语言insert， delete，update  DCL:  Data Controll Language 数据控制语言grant等  DQL: Data Query Language 数据查询语">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2020-03-30T03:22:43.000Z">
-<meta property="article:modified_time" content="2020-03-30T07:27:17.248Z">
+<meta property="article:modified_time" content="2020-03-31T07:36:19.334Z">
 <meta property="article:author" content="Chris Shang">
 <meta property="article:tag" content="DB, database, MySql">
 <meta name="twitter:card" content="summary">
@@ -198,10 +198,16 @@
                 <i class="fa fa-calendar-o"></i>
               </span>
               <span class="post-meta-item-text">Posted on</span>
-              
 
-              <time title="Created: 2020-03-30 11:22:43 / Modified: 15:27:17" itemprop="dateCreated datePublished" datetime="2020-03-30T11:22:43+08:00">2020-03-30</time>
+              <time title="Created: 2020-03-30 11:22:43" itemprop="dateCreated datePublished" datetime="2020-03-30T11:22:43+08:00">2020-03-30</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2020-03-31 15:36:19" itemprop="dateModified" datetime="2020-03-31T15:36:19+08:00">2020-03-31</time>
+              </span>
 
           
             <span class="post-meta-item" title="Views" id="busuanzi_container_page_pv" style="display: none;">
@@ -578,6 +584,7 @@
 <p>varchar(n)中的n也是字符数，但是最大值需要通过编码来算, 不能超过65535字节(从中还需要拿出1到2个字节来存长度)</p>
 <p>一般定长的数据选用char类型, 比如身份证号, 手机号, 电话等. 长度变化很大的可以使用varchar类型</p>
 <p>经测试, 100万条的数据, char和varchar的数据类型, 无论是否添加索引, varchar的搜索都要更快一点</p>
+<h2 id="持续更新-注"><a href="#持续更新-注" class="headerlink" title="持续更新(注)"></a>持续更新(注)</h2><p>该篇blog并不代表该知识点的所有内容, 在今后的工作学习中, <strong><font color="#dd0000">持续更新</font></strong>! 如对blog中的观点有异议/建议,请发送email至: <span class="exturl" data-url="bWFpbHRvOnNoY2hhb3NodWFpQGZveG1haWwuY29t" title="mailto:shchaoshuai@foxmail.com">shchaoshuai@foxmail.com<i class="fa fa-external-link"></i></span>, 感谢您的阅读.</p>
 
     </div>
 
@@ -619,7 +626,10 @@
     <a href="/2020/03/20/jvm/" rel="prev" title="jvm">
       <i class="fa fa-chevron-left"></i> jvm
     </a></div>
-      <div class="post-nav-item"></div>
+      <div class="post-nav-item">
+    <a href="/2020/03/31/zookeeper/" rel="next" title="zookeeper">
+      zookeeper <i class="fa fa-chevron-right"></i>
+    </a></div>
     </div>
       </footer>
     
@@ -679,7 +689,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#SQL语言分类"><span class="nav-number">1.</span> <span class="nav-text">SQL语言分类</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#MySQL数据类型"><span class="nav-number">2.</span> <span class="nav-text">MySQL数据类型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#MySQL-SQL解析顺序"><span class="nav-number">3.</span> <span class="nav-text">MySQL SQL解析顺序</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#MySQL-锁"><span class="nav-number">4.</span> <span class="nav-text">MySQL 锁</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#MySQL-事务"><span class="nav-number">5.</span> <span class="nav-text">MySQL 事务</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#MySQL-索引"><span class="nav-number">6.</span> <span class="nav-text">MySQL 索引</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#sql-执行流程"><span class="nav-number">7.</span> <span class="nav-text">sql 执行流程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#MySQL日志"><span class="nav-number">8.</span> <span class="nav-text">MySQL日志</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#InnoDB数据文件"><span class="nav-number">9.</span> <span class="nav-text">InnoDB数据文件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#多版本并发控制"><span class="nav-number">10.</span> <span class="nav-text">多版本并发控制</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#执行计划"><span class="nav-number">11.</span> <span class="nav-text">执行计划</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#数据库范式"><span class="nav-number">12.</span> <span class="nav-text">数据库范式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#mysql-优化-执行计划explain-慢查询日志-Query-Profiler"><span class="nav-number">13.</span> <span class="nav-text">mysql 优化(执行计划explain, 慢查询日志, Query Profiler)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#主从复制"><span class="nav-number">14.</span> <span class="nav-text">主从复制</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#mysql聚集索引和非聚集索引"><span class="nav-number">15.</span> <span class="nav-text">mysql聚集索引和非聚集索引</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#mysql-char和varchar的区别"><span class="nav-number">16.</span> <span class="nav-text">mysql char和varchar的区别</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#SQL语言分类"><span class="nav-number">1.</span> <span class="nav-text">SQL语言分类</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#MySQL数据类型"><span class="nav-number">2.</span> <span class="nav-text">MySQL数据类型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#MySQL-SQL解析顺序"><span class="nav-number">3.</span> <span class="nav-text">MySQL SQL解析顺序</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#MySQL-锁"><span class="nav-number">4.</span> <span class="nav-text">MySQL 锁</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#MySQL-事务"><span class="nav-number">5.</span> <span class="nav-text">MySQL 事务</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#MySQL-索引"><span class="nav-number">6.</span> <span class="nav-text">MySQL 索引</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#sql-执行流程"><span class="nav-number">7.</span> <span class="nav-text">sql 执行流程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#MySQL日志"><span class="nav-number">8.</span> <span class="nav-text">MySQL日志</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#InnoDB数据文件"><span class="nav-number">9.</span> <span class="nav-text">InnoDB数据文件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#多版本并发控制"><span class="nav-number">10.</span> <span class="nav-text">多版本并发控制</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#执行计划"><span class="nav-number">11.</span> <span class="nav-text">执行计划</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#数据库范式"><span class="nav-number">12.</span> <span class="nav-text">数据库范式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#mysql-优化-执行计划explain-慢查询日志-Query-Profiler"><span class="nav-number">13.</span> <span class="nav-text">mysql 优化(执行计划explain, 慢查询日志, Query Profiler)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#主从复制"><span class="nav-number">14.</span> <span class="nav-text">主从复制</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#mysql聚集索引和非聚集索引"><span class="nav-number">15.</span> <span class="nav-text">mysql聚集索引和非聚集索引</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#mysql-char和varchar的区别"><span class="nav-number">16.</span> <span class="nav-text">mysql char和varchar的区别</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#持续更新-注"><span class="nav-number">17.</span> <span class="nav-text">持续更新(注)</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -695,12 +705,12 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">11</span>
+          <span class="site-state-item-count">12</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
       <div class="site-state-item site-state-tags">
-        <span class="site-state-item-count">10</span>
+        <span class="site-state-item-count">11</span>
         <span class="site-state-item-name">tags</span>
       </div>
   </nav>

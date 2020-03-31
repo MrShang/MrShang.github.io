@@ -176,6 +176,274 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/03/31/zookeeper/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="Chris Shang">
+      <meta itemprop="description" content="Java, Architect">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Architect">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/03/31/zookeeper/" class="post-title-link" itemprop="url">zookeeper</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+              
+
+              <time title="Created: 2020-03-31 15:35:46 / Modified: 16:00:36" itemprop="dateCreated datePublished" datetime="2020-03-31T15:35:46+08:00">2020-03-31</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="zookeeper-一致性介绍"><a href="#zookeeper-一致性介绍" class="headerlink" title="zookeeper 一致性介绍"></a>zookeeper 一致性介绍</h2><p>分为以下几个方面：</p>
+<ul>
+<li><p>顺序一致性</p>
+</li>
+<li><p>原子性</p>
+</li>
+<li><p>单一视图</p>
+</li>
+<li><p>可靠性</p>
+</li>
+<li><p>最终一致性</p>
+</li>
+</ul>
+<h2 id="paxos-算法"><a href="#paxos-算法" class="headerlink" title="paxos 算法"></a>paxos 算法</h2><p>首先，有三种角色，<strong>Proposer</strong>, <strong>Acceptor</strong>, <strong>Learner</strong></p>
+<p>分为两个阶段</p>
+<h3 id="prepare阶段"><a href="#prepare阶段" class="headerlink" title="prepare阶段"></a>prepare阶段</h3><p>proposer会取一个全局唯一并且递增的一个提案编号N,并对N进行++操作。然后把prepare(N)这个信号发给各个Acceptor，用于试探集群是否接受该编号的提议。</p>
+<p>Acceptor收到这个提议后，有三种情况：</p>
+<ul>
+<li><p>Acceptor曾经未接收过任何提议，那么它会把提案编号N存储在本地。然后发送一个Accept(myid, null, null)的信号给proposer</p>
+</li>
+<li><p>Acceptor本地maxN存在，且大于N,那么表示proposer的这个提议已经过时，不对proposer作任何响应</p>
+</li>
+<li><p>Acceptor存在maxN且小于N，那么proposer会把一个Accept(myid, maxN, value)返回给proposer</p>
+</li>
+</ul>
+<h3 id="accept阶段"><a href="#accept阶段" class="headerlink" title="accept阶段"></a>accept阶段</h3><p><strong>注意有两个半数，第一个是Accept的信号，第二个是反馈信号</strong></p>
+<ul>
+<li><p>如果proposer收到了超过半数的accept，那么就会把真正的提案Proposal(myid, N, value)发送给所有的Acceptor。</p>
+</li>
+<li><p>当Acceptor拿到proposal(myid, N, value)时会再次与自己的maxN做对比，如果N是大于等于这个编号， 那么当前表决者Accept该提案，并反馈给提议者。</p>
+</li>
+<li><p>如果proposer接收到了来自半数以上的反馈，则发送”同步数据信息的信号“发送给曾经给自己做出响应的那些acceptor, 把”同步数据信息的信号 + 信息内容“ 发送给为接收自己提案的那些acceptor</p>
+</li>
+<li><p>如果没有超过半数，则再次进入prepare阶段，递增提案编号，重新提出prepare请求。</p>
+</li>
+</ul>
+<h2 id="ZAB（zookeeper-atomic-broadcast）协议"><a href="#ZAB（zookeeper-atomic-broadcast）协议" class="headerlink" title="ZAB（zookeeper atomic broadcast）协议"></a>ZAB（zookeeper atomic broadcast）协议</h2><p>ZAB协议是fast paxos算法的一种工业实现，但是两者的作用又有不同。</p>
+<p>ZAB协议的目的是构建高可用的分布式系统，如集群中leader挂掉了，那么会快速选举出一个leader。</p>
+<p>而paxos算法更强调的是一致性，让各个节点上的数据保持一致。</p>
+<h3 id="ZAB中的三个角色"><a href="#ZAB中的三个角色" class="headerlink" title="ZAB中的三个角色"></a>ZAB中的三个角色</h3><ul>
+<li><p>leader, 处理事务请求，负责进行投票及决议</p>
+</li>
+<li><p>follower，具有处理读请求，转发事务请求，当Leader宕机后具有选举与被选举权。</p>
+</li>
+<li><p>observer, 不具有选举权和被选举权的follower</p>
+</li>
+</ul>
+<p>其他地方对角色的一些叫法：</p>
+<ul>
+<li>learner = Observer + follower</li>
+<li>quorum server = leader + follower</li>
+</ul>
+<h3 id="三个重要的数据"><a href="#三个重要的数据" class="headerlink" title="三个重要的数据"></a><strong>三个重要的数据</strong></h3><ul>
+<li>zxid, 高32位是epoch，低32位是xid</li>
+<li>och</li>
+<li>xid</li>
+</ul>
+<h3 id="ZAB协议的三种模式"><a href="#ZAB协议的三种模式" class="headerlink" title="ZAB协议的三种模式"></a>ZAB协议的三种模式</h3><p>三种模式是混合出现的，如初始化阶段有<strong>恢复模式</strong>，<strong>同步模式</strong>和<strong>广播模式</strong>, 更新阶段有同步模式和广播模式</p>
+<ul>
+<li><p>同步模式</p>
+<ul>
+<li><p>初始化同步(这时候leader还是准leader):</p>
+</li>
+<li><p>为了保证同步的有序性，leader为每一个learner服务器准备了一个队列。</p>
+</li>
+<li><p>准leader将learner没有执行的过的事务封装成proposal逐一发给learner，并紧跟一条commit信息，表示该提案已经被执行过。</p>
+</li>
+<li><p>learner收到proposal并执行，然后follower会向准leader发送ACK信息。leader收到follower信息后，会将该follower放入follower列表中</p>
+</li>
+<li><p>当集群中有过半的FOLLOWER完成了初始化同步，那么该leader变为真正的leader</p>
+</li>
+</ul>
+</li>
+<li><p>广播模式</p>
+<ul>
+<li>消息广播算法</li>
+</ul>
+<p>由于只有leader具有处理事务的权利，当客户端发出事务请求后，FOLLOWER 或者 OBSERVER 会将这些事务请求转发给leader，leader会把这些事务请求分别封装成follower_queues and observer_queues，并为每个事务生成一个全局唯一的，递增的zxid，这样就保证了事务的一致性。然后leader把zxid封装成proposal发给各个follower，当follower收到proposal之后，就会与本地的事务日志中最大的zxid进行对比，如果本地的zxid小于proposal中的zxid，那么follower会发送一个ACK给leader，如果有半数以上的server发送了ACK，那么leader会向所有的FOLLOWER发送commit消息，向所有的observer发送proposal，FOLLOWER和OBSERVER收到这些消息之后，将事务更新到本地。</p>
+</li>
+<li><p>恢复模式（当集群刚刚启动或者当leader与半数以上的主机失联就会进入恢复模式）</p>
+<p>两个原则：</p>
+<ul>
+<li><p>已被处理过的消息不能丢，例如当leader收到事务请求后，且收到了超过半数的ACK后，需要向FOLLOWER广播commit信息，如果广播没有完成而leader挂了。这个时候已经处理过的消息是不能丢的。当新的leader被选举之后，经过恢复模式，要将所有server上的数据进行同步。</p>
+</li>
+<li><p>被丢弃的消息不能再现，即当leader收到了proposal，还未广播出去时挂了，那么当leader再次重启之后，变为follower，这个信息是不能再现的。</p>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="leader-选举"><a href="#leader-选举" class="headerlink" title="leader 选举"></a>leader 选举</h2><h3 id="基本概念"><a href="#基本概念" class="headerlink" title="基本概念"></a>基本概念</h3><ul>
+<li><p>myid，集群中服务器的id</p>
+</li>
+<li><p>logicalclock(逻辑时钟)，选举之后称为epoch，不同状态下的不同叫法</p>
+</li>
+<li><p>zk的状态，LOOKING, FOLLOWING, OBSERVING, LEADING</p>
+</li>
+</ul>
+<h3 id="leader-选举算法"><a href="#leader-选举算法" class="headerlink" title="leader 选举算法"></a>leader 选举算法</h3><ul>
+<li><p>集群启动中的Leader选举</p>
+<ul>
+<li><p>每个主机启动的时候都会为自己投票<strong>(myid, zxid)</strong>。当server1启动的时候，由于其他机器没有启动，得不到任何反馈信息，所以此时server1为<strong>Looking</strong>状态。</p>
+</li>
+<li><p>当server2启动时，server1和server2都会给彼此发送投票，server1发现server2更合适（先比较zxid，然后比较myid），然后更新本地选票为server2的投票信息. 经统计，server2的选票已经过半，那么server2就被选举为leader，状态改为<strong>LEADING</strong>, server1被加入到了server2的Follower 列表中，状态变为<strong>FOLLOWING</strong>。</p>
+</li>
+<li><p>当server3启动时，由于其他server没有状态为LOOKING，所以不能进行选举，所以只能以FOLLOWER的身份加入到集群中。</p>
+</li>
+</ul>
+</li>
+<li><p>断连后的Leader选举</p>
+<p>过程和启动中的Leader选举基本一致。如果是其他非Leader的server挂掉，只要挂的机器不到半数，就不影响集群的正常工作。如果leader挂掉，就要开始新一轮的选举。假设server2挂掉了，那么server1和server2由FOLLOWING状态变为LOOKING状态，server1和server3都会投自己，然后运行期间有可能zxid不同，然后server1和server3收到对方的投票时，server1会认为server3更合适，然后server3当选为leader。变为LEADING状态，server1变为FOLLOWING状态</p>
+</li>
+</ul>
+<h2 id="zk-集群"><a href="#zk-集群" class="headerlink" title="zk 集群"></a>zk 集群</h2><ul>
+<li><p>高可用集群的容灾，从容灾角度考虑，服务器的数量是奇数好。因为投票只有过半的才能选举成功，所以7台服务器和8台服务器的容灾能力是一样的。但从系统吞吐量上来说，8台的吞吐量还是比7台要好一点的</p>
+<p>三机房部署：</p>
+<p>N1 = (N -1)/2</p>
+<p>N2(范围) = 1 到 (N - N1)/2均可</p>
+<p>N3 = N - N1 - N2</p>
+</li>
+<li><p>集群扩容</p>
+<p>如果增加机器，需要修改配置文件。所以需要进行集群重启</p>
+</li>
+</ul>
+<h2 id="CAP"><a href="#CAP" class="headerlink" title="CAP"></a>CAP</h2><ul>
+<li><p>C(consistency): 一致性</p>
+</li>
+<li><p>A(Availability): 可用性，指在有限时间内，服务器总是能对客户端的每一个请求做出响应</p>
+</li>
+<li><p>P(Partition tolerance): 分区容错性 </p>
+</li>
+</ul>
+<p><strong>CA不能同时存在</strong>: 假如有个事务操作，如果保证了一致性，那么Leader需要将更新的结果广播出去，这个广播是需要时间的，在这段时间内如果有客户端请求过来，服务器是不能在有限的时间内做出响应的。</p>
+<p>如果保证了可用性，那么这段时间内的一致性就是无法保证的。</p>
+<h2 id="BASE"><a href="#BASE" class="headerlink" title="BASE"></a>BASE</h2><ul>
+<li><p>Base Available(基本可用)，系统在出现不可预知的故障的时候，允许丧失部分可用性</p>
+</li>
+<li><p>Soft state, 允许数据存在的中间状态, 灰度状态, 过渡状态</p>
+</li>
+<li><p>Eventually consistent，最终一致性</p>
+</li>
+</ul>
+<h2 id="zookeeper-watcher机制"><a href="#zookeeper-watcher机制" class="headerlink" title="zookeeper watcher机制"></a>zookeeper watcher机制</h2><p>zookeeper的Watch是一次性的，过程是，</p>
+<ul>
+<li><p>客户端生成watcher对象</p>
+</li>
+<li><p>客户端向服务器注册watcher对象</p>
+</li>
+<li><p>服务器触发watcher事件</p>
+</li>
+<li><p>服务器向客户端发送通知</p>
+</li>
+<li><p>客户端根据通知找到相应的watcher对象</p>
+</li>
+<li><p>watcher对象执行相应的回调函数</p>
+</li>
+</ul>
+<h2 id="zookeeper-数据类型"><a href="#zookeeper-数据类型" class="headerlink" title="zookeeper 数据类型"></a>zookeeper 数据类型</h2><ul>
+<li><p>zookeeper 数据类型是znode, zookeeper 没有像Linux那样的目录结构(UGO), 而是采用znode数据节点的概念</p>
+</li>
+<li><p>节点类型:(注:临时节点只能用作叶子节点)</p>
+</li>
+<li><p><strong>持久节点</strong>, <strong>持久顺序节点</strong>, <strong>临时节点(ephemeral)</strong>, <strong>临时顺序节点</strong></p>
+</li>
+<li><p><strong>ACL(Access Control List)</strong>是一种细粒度的权限访问控制, 可以针对任意用户进行细粒度的权限控制, 注意子节点和父节点不具有继承关系</p>
+</li>
+</ul>
+<p><strong>权限验证策略</strong>, 即你要限制某个用户只能操作某个文件夹, 是通过是么策略来控制的</p>
+<ul>
+<li>IP, </li>
+<li>digest(username:password)</li>
+<li>world(anyone)不验证</li>
+<li>super</li>
+</ul>
+<p><strong>五种权限</strong></p>
+<ul>
+<li><p>c(create)允许创建子节点</p>
+</li>
+<li><p>r(read)允许读当前节点和子节点</p>
+</li>
+<li><p>w(write)允许修改当前节点及子节点内容</p>
+</li>
+<li><p>d(delete)允许删除当前节点</p>
+</li>
+<li><p>a(acl)）允许修改当前节点的acl权限</p>
+</li>
+</ul>
+<h2 id="zookeeper典型应用场景"><a href="#zookeeper典型应用场景" class="headerlink" title="zookeeper典型应用场景"></a>zookeeper典型应用场景</h2><ul>
+<li><p>配置维护</p>
+<p>应用场景，在非分布式情况中，如果只有一台主机，则无需用到zookeeper,如果要进行配置的维护，只需要更改一个文件即可。但是在大型分布式系统中，如果有上千台主机，如果再一个一个文件去修改，安全隐患就会很高。这时候就可以用到zookeeper的发布订阅模型来实现。</p>
+<p>步骤是这样的，首先需要集群中的每个客户端都要向zookeeper中注册一个watcher监听，当维护人员进行配置变更时，zookeeper就会向客户端推送watcher事件，然后客户端收到该事件之后就会拉取最近的更新，来更新本地的配置文件</p>
+</li>
+<li><p>命名服务</p>
+<p>首先创建一组业务相关的结点，然后再在该结点下创建顺序结点，那么该顺序结点的路径加名称即为生成的唯一标识</p>
+</li>
+<li><p>DNS服务（服务注册中心）</p>
+<p>DNS服务是命名服务的一种特殊用法，首先创建根节点/DNS,然后在DNS结点下创建对应的应用app1,app2。然后再在app1下创建对应的服务名称结点，</p>
+<p>如service1.company.com，该结点的数据是host1:port,host2:port等</p>
+</li>
+<li><p>具有状态收集功能的DNS服务</p>
+<p>与上面相比, 该服务多了一个状态收集器。会定时从服务提供者那里收集服务的状态，放在对应的zookeeper结点下面。DUBBO就是使用zookeeper作域名服务器的。</p>
+</li>
+<li><p>分布式同步——Mysql数据复制总线</p>
+</li>
+<li><p>管理——分布式日志收集系统</p>
+</li>
+<li><p>式锁，排它锁/共享锁</p>
+</li>
+<li><p>分布式队列（FIFO队列，屏障Barrier队列）</p>
+</li>
+</ul>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="en">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/03/30/mysql/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -199,10 +467,16 @@
                 <i class="fa fa-calendar-o"></i>
               </span>
               <span class="post-meta-item-text">Posted on</span>
-              
 
-              <time title="Created: 2020-03-30 11:22:43 / Modified: 15:27:17" itemprop="dateCreated datePublished" datetime="2020-03-30T11:22:43+08:00">2020-03-30</time>
+              <time title="Created: 2020-03-30 11:22:43" itemprop="dateCreated datePublished" datetime="2020-03-30T11:22:43+08:00">2020-03-30</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2020-03-31 15:36:19" itemprop="dateModified" datetime="2020-03-31T15:36:19+08:00">2020-03-31</time>
+              </span>
 
           
 
@@ -572,6 +846,7 @@
 <p>varchar(n)中的n也是字符数，但是最大值需要通过编码来算, 不能超过65535字节(从中还需要拿出1到2个字节来存长度)</p>
 <p>一般定长的数据选用char类型, 比如身份证号, 手机号, 电话等. 长度变化很大的可以使用varchar类型</p>
 <p>经测试, 100万条的数据, char和varchar的数据类型, 无论是否添加索引, varchar的搜索都要更快一点</p>
+<h2 id="持续更新-注"><a href="#持续更新-注" class="headerlink" title="持续更新(注)"></a>持续更新(注)</h2><p>该篇blog并不代表该知识点的所有内容, 在今后的工作学习中, <strong><font color="#dd0000">持续更新</font></strong>! 如对blog中的观点有异议/建议,请发送email至: <span class="exturl" data-url="bWFpbHRvOnNoY2hhb3NodWFpQGZveG1haWwuY29t" title="mailto:shchaoshuai@foxmail.com">shchaoshuai@foxmail.com<i class="fa fa-external-link"></i></span>, 感谢您的阅读.</p>
 
       
     </div>
@@ -2405,192 +2680,6 @@
   
   
 
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="en">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/01/15/MessageQueue/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.jpg">
-      <meta itemprop="name" content="Chris Shang">
-      <meta itemprop="description" content="Java, Architect">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Architect">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/01/15/MessageQueue/" class="post-title-link" itemprop="url">消息队列</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">Posted on</span>
-
-              <time title="Created: 2020-01-15 15:40:20" itemprop="dateCreated datePublished" datetime="2020-01-15T15:40:20+08:00">2020-01-15</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2020-03-25 10:58:46" itemprop="dateModified" datetime="2020-03-25T10:58:46+08:00">2020-03-25</time>
-              </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="为什么使用消息队列"><a href="#为什么使用消息队列" class="headerlink" title="为什么使用消息队列"></a>为什么使用消息队列</h2><h3 id="解耦"><a href="#解耦" class="headerlink" title="解耦"></a>解耦</h3><p>​    譬如签到送积分, 签到和送积分是两个操作. 签到产生了很重要的数据, 它可以把该消息发送到MQ. 然后积分系统需要该数据, 从MQ中直接获取即可. 这样签到系统就做到了和积分系统解耦. 不必担心积分系统挂了怎么办, 是不是需要重试等. 这些都可以在积分系统内部自己实现. 再者, 如果以后另外一套系统也需要该签到数据, 直接从MQ中获取即可, 实际上与签到系统已无关系.</p>
-<h3 id="异步"><a href="#异步" class="headerlink" title="异步"></a>异步</h3><p>​    当做到解耦后, 实际异步就是自然而然的事情. 如果签到只需要1ms, 而送积分, 或者其他操作需要500ms, 那不可能等所有操作完成之后再去返回数据给用户. 这样就做到了异步.</p>
-<h3 id="削峰"><a href="#削峰" class="headerlink" title="削峰"></a>削峰</h3><p>​    削峰是指当并发访问高峰期, 通过MQ达到限流的目的, 从而减少对数据库MySQL的压力.</p>
-<h2 id="消息队列有什么优点和缺点"><a href="#消息队列有什么优点和缺点" class="headerlink" title="消息队列有什么优点和缺点"></a>消息队列有什么优点和缺点</h2><p><strong>优点</strong>就是第一点所提到的<strong>解耦</strong>, <strong>异步</strong>, <strong>削峰</strong></p>
-<p>缺点: </p>
-<ul>
-<li><p>系统可用性降低(当然有办法保证高可用), 相对而言</p>
-</li>
-<li><p>系统复杂度提高(这是引入新技术之后的必然结果), 因为随之而来的问题就是该技术本身的问题: 如何保证消息没有重复消费, 如何保证消息不丢失, 如何保证消息的顺序性等等</p>
-</li>
-<li><p>数据一致性问题(也可以归为系统复杂度提高的问题), 可以解决</p>
-</li>
-<li><p>如何保证消息的高可用</p>
-</li>
-<li><p>消息传递路径更长, 延时会增加</p>
-</li>
-<li><p>上游无法知道下游的执行结果(很致命)</p>
-</li>
-</ul>
-<h2 id="MQ适合使用的场景"><a href="#MQ适合使用的场景" class="headerlink" title="MQ适合使用的场景"></a>MQ适合使用的场景</h2><ul>
-<li><p>数据驱动的任务依赖. 如晚上执行的定时任务, task1, task2, task3, task2依赖task1, task3依赖task2</p>
-</li>
-<li><p>上游不关心执行结果. 如签到送积分, 修改/添加/删除数据要添加审计日志</p>
-</li>
-<li><p>上游关注执行结果,但执行时间很长. 如通过支付宝转账, 第三方把转账结果通过网关放入MQ, MQ再来通知用户 </p>
-</li>
-</ul>
-<h2 id="MQ不适合使用场景"><a href="#MQ不适合使用场景" class="headerlink" title="MQ不适合使用场景"></a>MQ不适合使用场景</h2><p>上游需要依赖下游的执行结果, 如登录, 不能把登录成功的消息放入MQ</p>
-<h2 id="各种MQ如何选择"><a href="#各种MQ如何选择" class="headerlink" title="各种MQ如何选择"></a>各种MQ如何选择</h2><ul>
-<li><p>社区活跃度,: RabbitMQ和kafka &gt; rocketMQ(阿里) &gt; ActiveMQ</p>
-</li>
-<li><p>性能: kafka, rocketMQ &gt; RabbitMQ &gt; ActiveMQ</p>
-</li>
-<li><p>功能完善性: rocketMQ, rabbitMQ, activeMQ &gt; kafka</p>
-</li>
-</ul>
-<p>所以中小公司, 没有自主研发能力的选择RabbitMQ, </p>
-<p>如果大数据公司做实时计算, 日志采集建议用kafka</p>
-<p>大公司可以使用rocketMQ, 因为用Java开发, 有问题自己可修改</p>
-<h2 id="如何保证消息不被重复消费-消费的幂等性"><a href="#如何保证消息不被重复消费-消费的幂等性" class="headerlink" title="如何保证消息不被重复消费(消费的幂等性)"></a>如何保证消息不被重复消费(消费的幂等性)</h2><p><strong>重复消费的场景:</strong></p>
-<ul>
-<li>同一个消费者重复消费</li>
-</ul>
-<p>指定时间内未消费完, 没有提交offset, 下次消费时重复消费</p>
-<ul>
-<li>不同的消费者重复消费</li>
-</ul>
-<p>consumer消费完之后, 没有提交offset或者未提交成功offset, consumer挂了, 该消息被分配给了其他consumer, 导致重复消费</p>
-<p><strong>问题解决:</strong></p>
-<ul>
-<li><p>设置超时时间</p>
-</li>
-<li><p>关闭自动提交, 改为手动提交, 提交之前检测数据库中是否有该消费过的数据</p>
-</li>
-</ul>
-<h2 id="如何保证消息的可靠性传输-消息丢失问题"><a href="#如何保证消息的可靠性传输-消息丢失问题" class="headerlink" title="如何保证消息的可靠性传输(消息丢失问题)"></a>如何保证消息的可靠性传输(消息丢失问题)</h2><p><strong>消息丢失场景:</strong></p>
-<ul>
-<li><p>生产者丢失数据</p>
-</li>
-<li><p>MQ丢失数据</p>
-</li>
-<li><p>消费者丢失数据</p>
-</li>
-</ul>
-<p><strong>问题解决:</strong></p>
-<ul>
-<li><p>生产者要等MQ返回ack之后才认为该消息发送成功*<em>, *</em>否则重试.(异步发送ack或nack信号, 不用等待)</p>
-</li>
-<li><p>RabbitMQ是通过持久化和confirm机制(即生产者要等MQ返回ack); </p>
-<p>kafaka通过设置参数:</p>
-<p>replication.factor 参数: 这个值必须大于 1，要求每个 partition 必须有至少 2 个副本</p>
-<p>min.insync.replicas 参数: 这个值必须大于 1，这个是要求一个 leader 至少感知到有至少一个 follower 还跟自己保持联系，没掉队，这样才能确保 leader 挂了还有一个 follower</p>
-<p>acks=all: 这个是要求每条数据，必须是写入所有 replica 之后，才能认为是写成功了</p>
-<p>retries=MAX（很大很大很大的一个值，无限次重试的意思): 这个是要求一旦写入失败，就无限重试</p>
-</li>
-<li><p>rabbitMQ和kafka关闭自动ack, 改为手动ack, 如果该消费者未提交ack, 那么MQ会分配其他消费者消费该消息;</p>
-</li>
-</ul>
-<h2 id="如何保证消息的顺序性"><a href="#如何保证消息的顺序性" class="headerlink" title="如何保证消息的顺序性"></a>如何保证消息的顺序性</h2><p><strong>场景:</strong> 如现在需要做一个mysql binlog的同步系统, 如果原始顺序是create, update, delete, 如果是无序的就有可能变成delete, create, update, 这样就出错了.</p>
-<p>RabbitMQ场景: 生产者放入顺序是data1, data2, data3, 因为有多个消费者, 所以有可能顺序会乱</p>
-<p>kafka场景: 生产者放入data1, data2, data3,生产者指定key,可以让这3条数据放入一个partition,一个partition是由一个消费者来消费的, 但是消费者端肯定会起多个线程来消费消息, 多个线程并发, 顺序就可能乱掉了.</p>
-<p><strong>解决:</strong></p>
-<p>实际上所有的顺序一致性都是: 生产者  —&gt;  MQ server   —&gt; 消费者, 只要消息在生产者, MQ server和消费者中间是顺序一致的, 就能保证消息的顺序一致. 保证生产者消息放入MQ server中的时候, 相同key的数据只放入一个queue(或partition), 然后消费的时候由一个消费者来消费, 就能保证消息的顺序一致. 譬如下单, 扣款, 发货, 这三个消息, 只要保证同一个订单内部的一致性就可以. 不同订单没有因果关系, 所以可以不用保证不同订单之间的顺序一致.</p>
-<h2 id="如何保证MQ的高可用"><a href="#如何保证MQ的高可用" class="headerlink" title="如何保证MQ的高可用"></a><strong>如何保证MQ的高可用</strong></h2><ul>
-<li><p>rabbitMQ 通过镜像集群模式. 即创建的queue, 无论是元数据还是queue里的消息, 都会存在于多个实例上. 就是说每个rabbitMQ节点都有这个queue的一个完整镜像.包含queue的全部数据, 每次写消息到queue的时候, 都会自动把消息同步到多个queue上.</p>
-</li>
-<li><p>kafka天然的分布式消息队列, kafka集群由多个broker组成, 一个topic可以有多个partition, 每个partition存在于不同的broker上. 每个broker上只存partition的一部分数据. 每个partition都会有副本存在于其他broker上, 这样即使有broker宕机, 也可以重新选举出一个partition作为leader, 继续支持读写.</p>
-</li>
-</ul>
-<h2 id="如何处理消息的延时以及过期失效问题"><a href="#如何处理消息的延时以及过期失效问题" class="headerlink" title="如何处理消息的延时以及过期失效问题"></a><strong>如何处理消息的延时以及过期失效问题</strong></h2><p>​    因为MQ,如rabbitMQ有ttl, 如果数据积压, 超过TTL时间不处理, 会直接丢掉.</p>
-<p>​    这时候, 只能把这些数据进行批量重导, 重新灌入mq里面</p>
-<h2 id="消息队列满了怎么处理"><a href="#消息队列满了怎么处理" class="headerlink" title="消息队列满了怎么处理"></a><strong>消息队列满了怎么处理</strong></h2><p>临时写个程序, 不做耗时操作, 操作一条废弃一条. 到系统并发量小的时候,譬如晚上12点的时候, 再做批量重导.</p>
-<h2 id="有百万条消息积压几小时-怎么处理"><a href="#有百万条消息积压几小时-怎么处理" class="headerlink" title="有百万条消息积压几小时,怎么处理"></a>有百万条消息积压几小时,怎么处理</h2><p><strong>场景:</strong> MQ里积压了上千万条数据</p>
-<p><strong>解决:</strong> </p>
-<ol>
-<li><p>查清楚是什么原因导致消息积压: consumer程序bug; consumer的消费速度落后于producer的生产速度;</p>
-</li>
-<li><p>如果仅是consumer的的消费速度落后于生产速度的话, 考虑扩容即可</p>
-</li>
-<li><p>若是consumer故障, 修复consumer, 并将其停掉</p>
-</li>
-<li><p>重新创建一个容量大的topic, 比如partition是原来的10倍</p>
-</li>
-<li><p>编写一个新的consumer, 消费原来积压的队列, 该consumer不做任何耗时的操作,将消息均匀的写入新创建的队列里</p>
-</li>
-<li><p>将修复好的consumer部署到原来10倍机器上消费队列</p>
-</li>
-<li><p>消息积压解决后, 恢复原有架构</p>
-</li>
-</ol>
-<h2 id="如何自己设计一个消息队列"><a href="#如何自己设计一个消息队列" class="headerlink" title="如何自己设计一个消息队列"></a>如何自己设计一个消息队列</h2><p>首先要理解kafka的原理</p>
-<ul>
-<li><p>broker –&gt; topic –&gt; partition, 如果资源不够用了, 就给topic增加partition, 提高吞吐量</p>
-</li>
-<li><p>mq要顺序落盘</p>
-</li>
-<li><p>高可用partition 副本, leader, broker</p>
-</li>
-<li><p>解决数据0丢失</p>
-</li>
-</ul>
-<h2 id="持续更新-注"><a href="#持续更新-注" class="headerlink" title="持续更新(注)"></a>持续更新(注)</h2><p>该篇blog并不代表该知识点的所有内容, 在今后的工作学习中, <strong><font color="#dd0000">持续更新</font></strong>! 如对blog中的观点有异议/建议,请发送email至: <span class="exturl" data-url="bWFpbHRvOnNoY2hhb3NodWFpQGZveG1haWwuY29t" title="mailto:shchaoshuai@foxmail.com">shchaoshuai@foxmail.com<i class="fa fa-external-link"></i></span>, 感谢您的阅读.</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
   </div>
 
   
@@ -2663,12 +2752,12 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">11</span>
+          <span class="site-state-item-count">12</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
       <div class="site-state-item site-state-tags">
-        <span class="site-state-item-count">10</span>
+        <span class="site-state-item-count">11</span>
         <span class="site-state-item-name">tags</span>
       </div>
   </nav>
