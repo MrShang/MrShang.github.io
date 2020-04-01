@@ -56,7 +56,7 @@
 <meta property="og:description" content="zookeeper 一致性介绍分为以下几个方面：  顺序一致性  原子性  单一视图  可靠性  最终一致性   paxos 算法首先，有三种角色，Proposer, Acceptor, Learner 分为两个阶段 prepare阶段proposer会取一个全局唯一并且递增的一个提案编号N,并对N进行++操作。然后把prepare(N)这个信号发给各个Acceptor，用于试探集群是否接受该编号">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2020-03-31T07:35:46.000Z">
-<meta property="article:modified_time" content="2020-03-31T08:00:36.042Z">
+<meta property="article:modified_time" content="2020-04-01T02:07:13.557Z">
 <meta property="article:author" content="Chris Shang">
 <meta property="article:tag" content="zookeeper, 分布式, 服务注册">
 <meta name="twitter:card" content="summary">
@@ -198,10 +198,16 @@
                 <i class="fa fa-calendar-o"></i>
               </span>
               <span class="post-meta-item-text">Posted on</span>
-              
 
-              <time title="Created: 2020-03-31 15:35:46 / Modified: 16:00:36" itemprop="dateCreated datePublished" datetime="2020-03-31T15:35:46+08:00">2020-03-31</time>
+              <time title="Created: 2020-03-31 15:35:46" itemprop="dateCreated datePublished" datetime="2020-03-31T15:35:46+08:00">2020-03-31</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2020-04-01 10:07:13" itemprop="dateModified" datetime="2020-04-01T10:07:13+08:00">2020-04-01</time>
+              </span>
 
           
             <span class="post-meta-item" title="Views" id="busuanzi_container_page_pv" style="display: none;">
@@ -431,6 +437,7 @@
 <li><p>分布式队列（FIFO队列，屏障Barrier队列）</p>
 </li>
 </ul>
+<h2 id="持续更新-注"><a href="#持续更新-注" class="headerlink" title="持续更新(注)"></a>持续更新(注)</h2><p>该篇blog并不代表该知识点的所有内容, 在今后的工作学习中, <strong><font color="#dd0000">持续更新</font></strong>! 如对blog中的观点有异议/建议,请发送email至: <span class="exturl" data-url="bWFpbHRvOnNoY2hhb3NodWFpQGZveG1haWwuY29t" title="mailto:shchaoshuai@foxmail.com">shchaoshuai@foxmail.com<i class="fa fa-external-link"></i></span>, 感谢您的阅读.</p>
 
     </div>
 
@@ -472,7 +479,10 @@
     <a href="/2020/03/30/mysql/" rel="prev" title="mysql">
       <i class="fa fa-chevron-left"></i> mysql
     </a></div>
-      <div class="post-nav-item"></div>
+      <div class="post-nav-item">
+    <a href="/2020/04/01/springboot/" rel="next" title="springboot">
+      springboot <i class="fa fa-chevron-right"></i>
+    </a></div>
     </div>
       </footer>
     
@@ -532,7 +542,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#zookeeper-一致性介绍"><span class="nav-number">1.</span> <span class="nav-text">zookeeper 一致性介绍</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#paxos-算法"><span class="nav-number">2.</span> <span class="nav-text">paxos 算法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#prepare阶段"><span class="nav-number">2.1.</span> <span class="nav-text">prepare阶段</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#accept阶段"><span class="nav-number">2.2.</span> <span class="nav-text">accept阶段</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ZAB（zookeeper-atomic-broadcast）协议"><span class="nav-number">3.</span> <span class="nav-text">ZAB（zookeeper atomic broadcast）协议</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#ZAB中的三个角色"><span class="nav-number">3.1.</span> <span class="nav-text">ZAB中的三个角色</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#三个重要的数据"><span class="nav-number">3.2.</span> <span class="nav-text">三个重要的数据</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ZAB协议的三种模式"><span class="nav-number">3.3.</span> <span class="nav-text">ZAB协议的三种模式</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#leader-选举"><span class="nav-number">4.</span> <span class="nav-text">leader 选举</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#基本概念"><span class="nav-number">4.1.</span> <span class="nav-text">基本概念</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#leader-选举算法"><span class="nav-number">4.2.</span> <span class="nav-text">leader 选举算法</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#zk-集群"><span class="nav-number">5.</span> <span class="nav-text">zk 集群</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#CAP"><span class="nav-number">6.</span> <span class="nav-text">CAP</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#BASE"><span class="nav-number">7.</span> <span class="nav-text">BASE</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#zookeeper-watcher机制"><span class="nav-number">8.</span> <span class="nav-text">zookeeper watcher机制</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#zookeeper-数据类型"><span class="nav-number">9.</span> <span class="nav-text">zookeeper 数据类型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#zookeeper典型应用场景"><span class="nav-number">10.</span> <span class="nav-text">zookeeper典型应用场景</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#zookeeper-一致性介绍"><span class="nav-number">1.</span> <span class="nav-text">zookeeper 一致性介绍</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#paxos-算法"><span class="nav-number">2.</span> <span class="nav-text">paxos 算法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#prepare阶段"><span class="nav-number">2.1.</span> <span class="nav-text">prepare阶段</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#accept阶段"><span class="nav-number">2.2.</span> <span class="nav-text">accept阶段</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ZAB（zookeeper-atomic-broadcast）协议"><span class="nav-number">3.</span> <span class="nav-text">ZAB（zookeeper atomic broadcast）协议</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#ZAB中的三个角色"><span class="nav-number">3.1.</span> <span class="nav-text">ZAB中的三个角色</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#三个重要的数据"><span class="nav-number">3.2.</span> <span class="nav-text">三个重要的数据</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ZAB协议的三种模式"><span class="nav-number">3.3.</span> <span class="nav-text">ZAB协议的三种模式</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#leader-选举"><span class="nav-number">4.</span> <span class="nav-text">leader 选举</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#基本概念"><span class="nav-number">4.1.</span> <span class="nav-text">基本概念</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#leader-选举算法"><span class="nav-number">4.2.</span> <span class="nav-text">leader 选举算法</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#zk-集群"><span class="nav-number">5.</span> <span class="nav-text">zk 集群</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#CAP"><span class="nav-number">6.</span> <span class="nav-text">CAP</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#BASE"><span class="nav-number">7.</span> <span class="nav-text">BASE</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#zookeeper-watcher机制"><span class="nav-number">8.</span> <span class="nav-text">zookeeper watcher机制</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#zookeeper-数据类型"><span class="nav-number">9.</span> <span class="nav-text">zookeeper 数据类型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#zookeeper典型应用场景"><span class="nav-number">10.</span> <span class="nav-text">zookeeper典型应用场景</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#持续更新-注"><span class="nav-number">11.</span> <span class="nav-text">持续更新(注)</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -548,12 +558,12 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">12</span>
+          <span class="site-state-item-count">13</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
       <div class="site-state-item site-state-tags">
-        <span class="site-state-item-count">11</span>
+        <span class="site-state-item-count">12</span>
         <span class="site-state-item-name">tags</span>
       </div>
   </nav>
