@@ -61,7 +61,7 @@
 <meta property="og:image" content="http://yoursite.com/2020/03/20/jvm/Java%E7%BC%96%E8%AF%91%E5%99%A8%E5%92%8C%E8%A7%A3%E9%87%8A%E5%99%A8%E7%9A%84%E5%8D%8F%E5%90%8C%E5%B7%A5%E4%BD%9C%E6%B5%81%E7%A8%8B.png">
 <meta property="og:image" content="http://yoursite.com/2020/03/20/jvm/%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E5%99%A8.png">
 <meta property="article:published_time" content="2020-03-20T00:37:05.000Z">
-<meta property="article:modified_time" content="2020-03-21T05:18:53.850Z">
+<meta property="article:modified_time" content="2020-04-09T03:14:45.556Z">
 <meta property="article:author" content="Chris Shang">
 <meta property="article:tag" content="JVM">
 <meta name="twitter:card" content="summary">
@@ -212,7 +212,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2020-03-21 13:18:53" itemprop="dateModified" datetime="2020-03-21T13:18:53+08:00">2020-03-21</time>
+                <time title="Modified: 2020-04-09 11:14:45" itemprop="dateModified" datetime="2020-04-09T11:14:45+08:00">2020-04-09</time>
               </span>
 
           
@@ -314,7 +314,7 @@
 <ol>
 <li><p><strong>线程共享, 方法区和堆</strong></p>
 <p><strong>方法区</strong></p>
-<p>也称为永久代(PermGen)<strong>注:是在1.7之前, 即hotspot在1.7之前是使用永久代来实现方法区. -XX:PermSize: 方法区初始大小, -XX:MaxPermSize: 方法区最大大小. **hotspot从1.8开始使用元空间替代了永久代</strong>. -XX:MetaspaceSize,达到该值就会触发GC进行类型卸载, 同时GC会对该值进行调整,如果释放了大量空间,就适当降低该值,如果释放了很少的空间,那么在不超过<strong>MaxMetaspaceSize</strong>时,适当提高该值 -XX:MaxMetaspaceSize,默认没有限制.</p>
+<p>​    也称为永久代(PermGen)<strong>注:是在1.7之前, 即hotspot在1.7之前是使用永久代来实现方法区. -XX:PermSize: 方法区初始大小, -XX:MaxPermSize: 方法区最大大小. **hotspot从1.8开始使用元空间替代了永久代</strong>. -XX:MetaspaceSize,达到该值就会触发GC进行类型卸载, 同时GC会对该值进行调整,如果释放了大量空间,就适当降低该值,如果释放了很少的空间,那么在不超过**MaxMetaspaceSize时,适当提高该值 -XX:MaxMetaspaceSize,默认没有限制.</p>
 </li>
 </ol>
 <p>   <strong>在方法区中，存储了每个类的信息（包括类的名称、修饰符、方法信息、字段信息）、类中静态变量、类中定义为final类型的常量、类中的Field信息、类中的方法信息以及编译器编译后的代码等</strong></p>
@@ -327,7 +327,7 @@
 </li>
 </ul>
 <p><strong>堆</strong></p>
-<p>存放new 生成的对象和数组, 是虚拟机管理的内存中最大的一块. </p>
+<p>​    存放new 生成的对象和数组, 是虚拟机管理的内存中最大的一块. </p>
 </li>
 </ul>
 <p>jvm的内存划分, 如图:</p>
@@ -648,12 +648,12 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">13</span>
+          <span class="site-state-item-count">14</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
       <div class="site-state-item site-state-tags">
-        <span class="site-state-item-count">12</span>
+        <span class="site-state-item-count">13</span>
         <span class="site-state-item-name">tags</span>
       </div>
   </nav>

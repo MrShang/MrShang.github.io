@@ -56,7 +56,7 @@
 <meta property="og:description" content="kafka应用场景kafka是分布式消息系统，具有高吞吐量，可容错的发布-订阅消息系统。 应用场景:  用户活动追踪  日志聚合  限流削峰   高吞吐率实现：  顺序读写 零拷贝 批量发送 消息压缩  kafka基本概念 Topic，相当于消息的一个主题，标签  Partition，一个topic可以有多个partition，一个partition对应系统上的一个到多个目录。一个topic的pa">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2020-01-19T08:07:27.000Z">
-<meta property="article:modified_time" content="2020-01-20T03:19:08.354Z">
+<meta property="article:modified_time" content="2020-04-09T05:17:13.270Z">
 <meta property="article:author" content="Chris Shang">
 <meta property="article:tag" content="kafka, 分布式, MQ">
 <meta name="twitter:card" content="summary">
@@ -206,7 +206,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2020-01-20 11:19:08" itemprop="dateModified" datetime="2020-01-20T11:19:08+08:00">2020-01-20</time>
+                <time title="Modified: 2020-04-09 13:17:13" itemprop="dateModified" datetime="2020-04-09T13:17:13+08:00">2020-04-09</time>
               </span>
 
           
@@ -305,14 +305,13 @@
 </li>
 <li><p><strong>zookeeper</strong></p>
 <ul>
-<li><p>zookeeper负则broker controller的选举。</p>
-</li>
-<li><p>partition leader是由 broker controller负则选举的</p>
-</li>
-</ul>
-</li>
-</ul>
+<li><p>zookeeper负则broker controller的选举</p>
 <ul>
+<li>partition leader是由 broker controller负责选举的</li>
+</ul>
+</li>
+</ul>
+</li>
 <li><p><strong>Coordinator</strong></p>
 <p>coordinator是用来管理消费者组的，是运行在每个broker上的group coordinator进程，主要负则offset的位移管理和rebalance,一个coordinator可以管理多个消费者组 </p>
 </li>
@@ -321,7 +320,7 @@
 <p>rebalance可以给系统带来高可用性和伸缩性，但是<strong>在Rebalance期间，消费者是无法读取消息的</strong>，因此要避免不必要的Rebalance</p>
 </li>
 </ul>
-<p>  <strong>引发Rebalance的情形：</strong></p>
+<p>  <strong>引发Rebalance的情形:</strong></p>
 <ul>
 <li>消费者组中添加消费者</li>
 <li>消费者取消订阅，关闭或崩溃</li>
@@ -595,12 +594,12 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">13</span>
+          <span class="site-state-item-count">14</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
       <div class="site-state-item site-state-tags">
-        <span class="site-state-item-count">12</span>
+        <span class="site-state-item-count">13</span>
         <span class="site-state-item-name">tags</span>
       </div>
   </nav>

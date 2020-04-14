@@ -48,20 +48,22 @@
   };
 </script>
 
-  <meta name="description" content="Java, Architect">
-<meta property="og:type" content="website">
-<meta property="og:title" content="Architect">
-<meta property="og:url" content="http://yoursite.com/archives/2020/03/index.html">
+  <meta name="description" content="B树的概念B树(Balanced Tree, 平衡树)就是B-树, 实际上是对B-Tree的简称. B树的特点如下(对于m阶树):  每个节点最多有m-1个关键字, 即每个节点存储的键值对个数, 如5阶树, 最多只能有4个关键字 根节点最少可以只有一个关键字 非根节点至少有m&#x2F;2个关键字 每个节点中的关键字都是按照从小到大的顺序排列, 每个关键字的左子树中的所有关键字都小于它, 而右子树中的所有关">
+<meta property="og:type" content="article">
+<meta property="og:title" content="B树和B+树">
+<meta property="og:url" content="http://yoursite.com/2020/04/14/B-Tree-B+Tree/index.html">
 <meta property="og:site_name" content="Architect">
-<meta property="og:description" content="Java, Architect">
+<meta property="og:description" content="B树的概念B树(Balanced Tree, 平衡树)就是B-树, 实际上是对B-Tree的简称. B树的特点如下(对于m阶树):  每个节点最多有m-1个关键字, 即每个节点存储的键值对个数, 如5阶树, 最多只能有4个关键字 根节点最少可以只有一个关键字 非根节点至少有m&#x2F;2个关键字 每个节点中的关键字都是按照从小到大的顺序排列, 每个关键字的左子树中的所有关键字都小于它, 而右子树中的所有关">
 <meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://yoursite.com/2020/04/14/B-Tree-B+Tree/B%E6%A0%91%E6%8F%92%E5%85%A5.png">
+<meta property="article:published_time" content="2020-04-14T07:45:42.000Z">
+<meta property="article:modified_time" content="2020-04-14T09:05:19.983Z">
 <meta property="article:author" content="Chris Shang">
-<meta property="article:tag" content="Java">
-<meta property="article:tag" content=" Architecher">
-<meta property="article:tag" content=" Distribute">
+<meta property="article:tag" content="数据结构, algorithm, B树, B+树">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://yoursite.com/2020/04/14/B-Tree-B+Tree/B%E6%A0%91%E6%8F%92%E5%85%A5.png">
 
-<link rel="canonical" href="http://yoursite.com/archives/2020/03/">
+<link rel="canonical" href="http://yoursite.com/2020/04/14/B-Tree-B+Tree/">
 
 
 <script id="page-configurations">
@@ -69,11 +71,11 @@
   CONFIG.page = {
     sidebar: "",
     isHome: false,
-    isPost: false
+    isPost: true
   };
 </script>
 
-  <title>Archive | Architect</title>
+  <title>B树和B+树 | Architect</title>
   
 
 
@@ -171,149 +173,139 @@
           <div class="content">
             
 
+  <div class="posts-expand">
+      
   
   
-  
-  <div class="post-block">
-    <div class="posts-collapse">
-      <div class="collection-title">
-        <span class="collection-header">Um..! 14 posts in total. Keep on posting.</span>
-      </div>
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="en">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/04/14/B-Tree-B+Tree/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="Chris Shang">
+      <meta itemprop="description" content="Java, Architect">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Architect">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          B树和B+树
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+              
+
+              <time title="Created: 2020-04-14 15:45:42 / Modified: 17:05:19" itemprop="dateCreated datePublished" datetime="2020-04-14T15:45:42+08:00">2020-04-14</time>
+            </span>
+
+          
+            <span class="post-meta-item" title="Views" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">Views: </span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
 
       
-    <div class="collection-year">
-      <h2 class="collection-header">2020</h2>
-    </div>
-
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <div class="post-meta">
-        <time itemprop="dateCreated"
-              datetime="2020-03-31T15:35:46+08:00"
-              content="2020-03-31">
-          03-31
-        </time>
-      </div>
-
-      <h3 class="post-title">
-          <a class="post-title-link" href="/2020/03/31/zookeeper/" itemprop="url">
-            <span itemprop="name">zookeeper</span>
-          </a>
-      </h3>
-
-    </header>
-  </article>
-
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <div class="post-meta">
-        <time itemprop="dateCreated"
-              datetime="2020-03-30T11:22:43+08:00"
-              content="2020-03-30">
-          03-30
-        </time>
-      </div>
-
-      <h3 class="post-title">
-          <a class="post-title-link" href="/2020/03/30/mysql/" itemprop="url">
-            <span itemprop="name">mysql</span>
-          </a>
-      </h3>
-
-    </header>
-  </article>
-
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <div class="post-meta">
-        <time itemprop="dateCreated"
-              datetime="2020-03-20T08:37:05+08:00"
-              content="2020-03-20">
-          03-20
-        </time>
-      </div>
-
-      <h3 class="post-title">
-          <a class="post-title-link" href="/2020/03/20/jvm/" itemprop="url">
-            <span itemprop="name">jvm</span>
-          </a>
-      </h3>
-
-    </header>
-  </article>
-
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <div class="post-meta">
-        <time itemprop="dateCreated"
-              datetime="2020-03-16T17:28:08+08:00"
-              content="2020-03-16">
-          03-16
-        </time>
-      </div>
-
-      <h3 class="post-title">
-          <a class="post-title-link" href="/2020/03/16/algorithm-search/" itemprop="url">
-            <span itemprop="name">algorithm-search</span>
-          </a>
-      </h3>
-
-    </header>
-  </article>
-
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <div class="post-meta">
-        <time itemprop="dateCreated"
-              datetime="2020-03-10T10:12:10+08:00"
-              content="2020-03-10">
-          03-10
-        </time>
-      </div>
-
-      <h3 class="post-title">
-          <a class="post-title-link" href="/2020/03/10/algorithm-sort/" itemprop="url">
-            <span itemprop="name">algorithm-sort</span>
-          </a>
-      </h3>
-
-    </header>
-  </article>
-
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <div class="post-meta">
-        <time itemprop="dateCreated"
-              datetime="2020-03-09T15:47:53+08:00"
-              content="2020-03-09">
-          03-09
-        </time>
-      </div>
-
-      <h3 class="post-title">
-          <a class="post-title-link" href="/2020/03/09/ElasticSearch/" itemprop="url">
-            <span itemprop="name">ElasticSearch</span>
-          </a>
-      </h3>
-
-    </header>
-  </article>
-
+        <h2 id="B树的概念"><a href="#B树的概念" class="headerlink" title="B树的概念"></a>B树的概念</h2><p>B树(Balanced Tree, 平衡树)就是B-树, 实际上是对B-Tree的简称.</p>
+<p>B树的特点如下(对于m阶树):</p>
+<ul>
+<li>每个节点最多有m-1个关键字, 即每个节点存储的键值对个数, 如5阶树, 最多只能有4个关键字</li>
+<li>根节点最少可以只有一个关键字</li>
+<li>非根节点至少有m/2个关键字</li>
+<li>每个节点中的关键字都是按照<strong>从小到大</strong>的顺序排列, 每个关键字的左子树中的所有关键字都小于它, 而右子树中的所有关键字都大于它</li>
+<li>所有叶子节点都位于同一层, 即从根节点到每个叶子节点的长度都相同</li>
+<li>每个节点都存有数据, 也就是对应的key和value</li>
+</ul>
+<p><strong>所以, 根节点的关键字数量范围: <code>1 &lt;= k &lt;= m-1</code>, 非根节点的关键字数量范围: <code>m/2 &lt;= k &lt;= m-1</code></strong></p>
+<h2 id="B树的插入"><a href="#B树的插入" class="headerlink" title="B树的插入"></a>B树的插入</h2><p><strong>插入的时候有一个关键点: 判断当前的key的个数是否小于等于m, 如果满足, 直接插入; 如果不满足, 将节点从中间的key将该节点拆成两部分, 中间的节点放到父节点即可;</strong></p>
+<p><img src="/2020/04/14/B-Tree-B+Tree/B%E6%A0%91%E6%8F%92%E5%85%A5.png" alt="B树的插入"></p>
+<h2 id="B树的删除"><a href="#B树的删除" class="headerlink" title="B树的删除"></a>B树的删除</h2><p>B树的删除相对复杂一点, 分为以下几种情况</p>
+<ul>
+<li>删除叶子节点的元素, 如果删除之后, 节点数还是大于<code>m/2</code>, 这种情况只要直接删除即可</li>
+<li>对于非叶子节点的删除, 我们需要用后继key覆盖要删除的key, 然后在后继key所在的子支中删除该后继key</li>
+<li>如果删除叶子节点, 如果删除元素后元素个数少于(m/2), 并且它的兄弟节点的元素大于(m/2), 也就是说兄弟节点的元素比最少值m/2还多, 则先将父节点的元素移到该节点, 然后将兄弟节点的元素再移动到父节点</li>
+<li>删除叶子节点, 删除后不满足要求, 这时, 我们需要考虑向兄弟节点借元素, 若兄弟节点也没有多的节点, 借不了, 怎么办呢? 如果遇到这种情况, <strong>首先, 还是将先将父节点的元素移到该节点, 然后将当前节点及它的兄弟节点中的key合并，形成一个新的节点</strong></li>
+</ul>
+<h2 id="B-树的概念"><a href="#B-树的概念" class="headerlink" title="B+树的概念"></a>B+树的概念</h2><p>B+树和B树非常相似, <strong>不同点</strong>:</p>
+<ul>
+<li>B+树有两种类型的节点, 内部节点和叶子节点, 内部节点不存数据信息, 只存索引; 叶子节点存储数据信息;</li>
+<li>每个叶子节点都含有左右节点的指针, 叶子节点按照关键字的大小自小而大顺序排列</li>
+<li>父节点存有右孩子第一个元素的索引.</li>
+</ul>
+<p>B+树的插入和删除都比B树简单.</p>
+<h2 id="B树和B-树对比"><a href="#B树和B-树对比" class="headerlink" title="B树和B+树对比"></a>B树和B+树对比</h2><ul>
+<li>同一大小的磁盘页, B+树单一节点存储的元素更多(因为数据节点都存储在叶子节点, 而B树各个节点都含有数据元素), 使得查询的IO次数更少</li>
+<li>所有查询都要查到叶子节点, 查询性能更稳定</li>
+<li>所有叶子节点形成有序链表, 便于范围查询</li>
+</ul>
 
     </div>
+
+    
+    
+    
+        <div class="reward-container">
+  <div>Thanks for your donating.</div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    Donate
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="/images/wechatpay.png" alt="Chris Shang WeChat Pay">
+        <p>WeChat Pay</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="/images/alipay.png" alt="Chris Shang Alipay">
+        <p>Alipay</p>
+      </div>
+
   </div>
+</div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-algorithm-B%E6%A0%91-B-%E6%A0%91/" rel="tag"># 数据结构, algorithm, B树, B+树</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/04/01/springboot/" rel="prev" title="springboot">
+      <i class="fa fa-chevron-left"></i> springboot
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
   
   
   
 
-  
-
+  </div>
 
 
           </div>
@@ -364,6 +356,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#B树的概念"><span class="nav-number">1.</span> <span class="nav-text">B树的概念</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#B树的插入"><span class="nav-number">2.</span> <span class="nav-text">B树的插入</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#B树的删除"><span class="nav-number">3.</span> <span class="nav-text">B树的删除</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#B-树的概念"><span class="nav-number">4.</span> <span class="nav-text">B+树的概念</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#B树和B-树对比"><span class="nav-number">5.</span> <span class="nav-text">B树和B+树对比</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
