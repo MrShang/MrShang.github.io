@@ -57,7 +57,7 @@
 <meta property="og:locale" content="en_US">
 <meta property="og:image" content="http://yoursite.com/2020/03/09/ElasticSearch/ES%E7%BB%93%E6%9E%84.png">
 <meta property="article:published_time" content="2020-03-09T07:47:53.000Z">
-<meta property="article:modified_time" content="2020-03-24T23:14:06.248Z">
+<meta property="article:modified_time" content="2020-04-23T05:40:54.589Z">
 <meta property="article:author" content="Chris Shang">
 <meta property="article:tag" content="分布式, ElasticSearch">
 <meta name="twitter:card" content="summary">
@@ -208,7 +208,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2020-03-25 07:14:06" itemprop="dateModified" datetime="2020-03-25T07:14:06+08:00">2020-03-25</time>
+                <time title="Modified: 2020-04-23 13:40:54" itemprop="dateModified" datetime="2020-04-23T13:40:54+08:00">2020-04-23</time>
               </span>
 
           
@@ -360,7 +360,7 @@
 </li>
 </ol>
 <h2 id="mapping文件中一些参数的设置需要注意的点"><a href="#mapping文件中一些参数的设置需要注意的点" class="headerlink" title="mapping文件中一些参数的设置需要注意的点"></a>mapping文件中一些参数的设置需要注意的点</h2><ul>
-<li><p><strong>copy_to</strong>, 不能通过中间值来复制, 如不能把field1 copy 给field2, 然后再通过field copy给field3. 但是可以同时将field1 copy给field3</p>
+<li><p><strong>copy_to</strong>, 不能通过中间值来复制, 如不能把field1 copy 给field2, 然后再通过field2 copy给field3. 但是可以同时将field1 copy给field2和field3</p>
 </li>
 <li><p><strong>doc_values</strong>: 如果确定不需要通过该字段进行排序或聚合, 就将该值设置为false. 能节省磁盘空间. text 类型的字段不支持该值(所以如果想让该字段支持排序或聚合, 就应该设置一个innerfield,类型为keyword)</p>
 </li>
@@ -379,7 +379,7 @@
 </li>
 <li><p><strong>Asciifolding</strong>: 作用是去掉变音符号(如法语)并且能把Unicode字符转化为ASCII来表示.</p>
 </li>
-<li><p>store: 是否存储该字段的原始值.在某些情况下是有用的, 如果你有一个带有标题、日期和一个非常大的内容字段的文档，你可能希望只检索标题和日期，而不必从一个大的源字段中提取这些字段, 如把title和date设置为:store: true.搜索的时候只检索title和date</p>
+<li><p><strong>store</strong>: 是否存储该字段的原始值.在某些情况下是有用的, 如果你有一个带有标题、日期和一个非常大的内容字段的文档，你可能希望只检索标题和日期，而不必从一个大的源字段中提取这些字段, 如把title和date设置为:store: true.搜索的时候只检索title和date</p>
 <p>GET my_index/_search{</p>
 <p>  “<strong>stored_fields</strong>“: [ “title”, “date” ] }</p>
 </li>
