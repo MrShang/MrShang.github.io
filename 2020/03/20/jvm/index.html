@@ -61,7 +61,7 @@
 <meta property="og:image" content="http://yoursite.com/2020/03/20/jvm/Java%E7%BC%96%E8%AF%91%E5%99%A8%E5%92%8C%E8%A7%A3%E9%87%8A%E5%99%A8%E7%9A%84%E5%8D%8F%E5%90%8C%E5%B7%A5%E4%BD%9C%E6%B5%81%E7%A8%8B.png">
 <meta property="og:image" content="http://yoursite.com/2020/03/20/jvm/%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E5%99%A8.png">
 <meta property="article:published_time" content="2020-03-20T00:37:05.000Z">
-<meta property="article:modified_time" content="2020-04-09T03:14:45.556Z">
+<meta property="article:modified_time" content="2020-04-30T01:44:27.924Z">
 <meta property="article:author" content="Chris Shang">
 <meta property="article:tag" content="JVM">
 <meta name="twitter:card" content="summary">
@@ -212,7 +212,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2020-04-09 11:14:45" itemprop="dateModified" datetime="2020-04-09T11:14:45+08:00">2020-04-09</time>
+                <time title="Modified: 2020-04-30 09:44:27" itemprop="dateModified" datetime="2020-04-30T09:44:27+08:00">2020-04-30</time>
               </span>
 
           
@@ -335,6 +335,11 @@
 <p>如图所示, 堆分为年轻代, Old Memory(老年代), Perm(永久代), 在JDK1.8中<strong>永久代(方法区)</strong>被替换为<strong>MetaSpace</strong>, 且MetaSpace存在于内存中, 永久代存在于JVM中.</p>
 <ul>
 <li><p><strong>新生代</strong>: 分为<strong>Eden, survivor from, survivor to</strong>三部分, 比例默认为8:1:1. 使用复制清除算法(Copying), 因为每次垃圾回收都要在该空间回收大部分对象. 新创建的对象放在Eden区, 如果GC发现该对象有被引用, 就放入suvivor from区, 如果超过15次(默认)GC, 该对象仍然存在, 就把该对象放入老年代; 使用的时候每次只使用Eden和survivor from两个空间, <strong>垃圾回收时将存活对象放入未使用的survivor空间(即survivor to)中. 清空Eden和刚使用过的survivor空间.</strong> </p>
+<ul>
+<li><p>为什么survivor空间需要两块区域?</p>
+<p>防止survivor区域过于碎片化, 这样就直接导致了没有较大的连续存储空间. 如果有两个, 就可以始终保证其中一个是空的, 另一个区域有连续的存储空间.</p>
+</li>
+</ul>
 </li>
 <li><p><strong>老年代</strong>: 采用标记整理算法(mark-compact), 原因是老年代每次<strong>GC只会回收少部分对象</strong>. 在survivor区的对象经过若干次(默认15)GC之后仍然存活的, 就会被转移到老年代. <strong>大对象直接进入老年代</strong>(很长的字符串或数组).</p>
 </li>
@@ -464,11 +469,11 @@
 <p>会导致minor GC过于频繁</p>
 <p>可能导致minor GC对象直接进入老年代(因为GC频繁), 触发Full GC</p>
 </li>
-</ul>
-</li>
 <li><p>避免新生代空间设置过大</p>
 <p>老年代变小, Full GC频繁</p>
 <p>minor GC时间大幅增加</p>
+</li>
+</ul>
 </li>
 </ul>
 <h2 id="垃圾回收器"><a href="#垃圾回收器" class="headerlink" title="垃圾回收器"></a><strong>垃圾回收器</strong></h2><p><img src="/2020/03/20/jvm/%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E5%99%A8.png" alt="垃圾回收器"> </p>

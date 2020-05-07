@@ -48,18 +48,21 @@
   };
 </script>
 
-  <meta name="description" content="zookeeper 一致性介绍分为以下几个方面：  顺序一致性  原子性  单一视图  可靠性  最终一致性   paxos 算法首先，有三种角色，Proposer, Acceptor, Learner 分为两个阶段 prepare阶段proposer会取一个全局唯一并且递增的一个提案编号N,并对N进行++操作。然后把prepare(N)这个信号发给各个Acceptor，用于试探集群是否接受该编号">
+  <meta name="description" content="zookeeper基础知识zookeeper基础知识分为三大模块, 数据模型, ACL权限控制, Watch监控 数据模型ZooKeeper 中的数据模型是一种树形结构，非常像电脑中的文件系统，有一个根文件夹，下面还有很多子文件夹。ZooKeeper 的数据模型也具有一个固定的根节点（&#x2F;），我们可以在根节点下创建子节点，并在子节点下继续创建下一级节点。ZooKeeper 树中的每一层级用斜杠（&#x2F;）">
 <meta property="og:type" content="article">
 <meta property="og:title" content="zookeeper">
 <meta property="og:url" content="http://yoursite.com/2020/03/31/zookeeper/index.html">
 <meta property="og:site_name" content="Architect">
-<meta property="og:description" content="zookeeper 一致性介绍分为以下几个方面：  顺序一致性  原子性  单一视图  可靠性  最终一致性   paxos 算法首先，有三种角色，Proposer, Acceptor, Learner 分为两个阶段 prepare阶段proposer会取一个全局唯一并且递增的一个提案编号N,并对N进行++操作。然后把prepare(N)这个信号发给各个Acceptor，用于试探集群是否接受该编号">
+<meta property="og:description" content="zookeeper基础知识zookeeper基础知识分为三大模块, 数据模型, ACL权限控制, Watch监控 数据模型ZooKeeper 中的数据模型是一种树形结构，非常像电脑中的文件系统，有一个根文件夹，下面还有很多子文件夹。ZooKeeper 的数据模型也具有一个固定的根节点（&#x2F;），我们可以在根节点下创建子节点，并在子节点下继续创建下一级节点。ZooKeeper 树中的每一层级用斜杠（&#x2F;）">
 <meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://yoursite.com/2020/03/31/zookeeper/zookeeper%E6%95%B0%E6%8D%AE%E6%A8%A1%E5%9E%8B.png">
+<meta property="og:image" content="http://yoursite.com/2020/03/31/zookeeper/zookeeper%E8%8A%82%E7%82%B9%E4%BF%A1%E6%81%AF.png">
 <meta property="article:published_time" content="2020-03-31T07:35:46.000Z">
-<meta property="article:modified_time" content="2020-04-01T02:07:13.557Z">
+<meta property="article:modified_time" content="2020-05-07T08:23:19.101Z">
 <meta property="article:author" content="Chris Shang">
 <meta property="article:tag" content="zookeeper, 分布式, 服务注册">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://yoursite.com/2020/03/31/zookeeper/zookeeper%E6%95%B0%E6%8D%AE%E6%A8%A1%E5%9E%8B.png">
 
 <link rel="canonical" href="http://yoursite.com/2020/03/31/zookeeper/">
 
@@ -206,7 +209,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2020-04-01 10:07:13" itemprop="dateModified" datetime="2020-04-01T10:07:13+08:00">2020-04-01</time>
+                <time title="Modified: 2020-05-07 16:23:19" itemprop="dateModified" datetime="2020-05-07T16:23:19+08:00">2020-05-07</time>
               </span>
 
           
@@ -227,7 +230,33 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <h2 id="zookeeper-一致性介绍"><a href="#zookeeper-一致性介绍" class="headerlink" title="zookeeper 一致性介绍"></a>zookeeper 一致性介绍</h2><p>分为以下几个方面：</p>
+        <h2 id="zookeeper基础知识"><a href="#zookeeper基础知识" class="headerlink" title="zookeeper基础知识"></a>zookeeper基础知识</h2><p>zookeeper基础知识分为三大模块, <strong>数据模型</strong>, <strong>ACL权限控制</strong>, <strong>Watch监控</strong></p>
+<h3 id="数据模型"><a href="#数据模型" class="headerlink" title="数据模型"></a>数据模型</h3><p>ZooKeeper 中的数据模型是一种树形结构，非常像电脑中的文件系统，有一个根文件夹，下面还有很多子文件夹。ZooKeeper 的数据模型也具有一个固定的根节点（/），我们可以在根节点下创建子节点，并在子节点下继续创建下一级节点。ZooKeeper 树中的每一层级用斜杠（/）分隔开，且只能用绝对路径（如“get /work/task1”）的方式查询 ZooKeeper 节点，而不能使用相对路径。具体的结构你可以看看下面这张图：</p>
+<p><img src="/2020/03/31/zookeeper/zookeeper%E6%95%B0%E6%8D%AE%E6%A8%A1%E5%9E%8B.png" alt="zookeeper数据模型"></p>
+<p>ZooKeeper 的数据模型是一种树形结构，就像在 MySQL 中数据是存在于数据表中，ZooKeeper 中的数据是由多个数据节点最终构成的一个层级的树状结构，和我们在创建 MySOL 数据表时会定义不同类型的数据列字段，ZooKeeper 中的数据节点也分为<strong>持久节点</strong>、<strong>临时节点</strong>和<strong>有序节点</strong>三种类型</p>
+<ul>
+<li><p><strong>持久节点</strong><br>我们第一个介绍的是持久节点，这种节点也是在 ZooKeeper 最为常用的，几乎所有业务场景中都会包含持久节点的创建。之所以叫作持久节点是因为一旦将节点创建为持久节点，该数据节点会一直存储在 ZooKeeper 服务器上，即使创建该节点的客户端与服务端的会话关闭了，该节点依然不会被删除。如果我们想删除持久节点，就要显式调用 delete 函数进行删除操作。</p>
+</li>
+<li><p><strong>临时节点</strong><br>接下来我们来介绍临时节点。从名称上我们可以看出该节点的一个最重要的特性就是临时性。所谓临时性是指，如果将节点创建为临时节点，那么该节点数据不会一直存储在 ZooKeeper 服务器上。当创建该临时节点的客户端会话因超时或发生异常而关闭时，该节点也相应在 ZooKeeper 服务器上被删除。同样，我们可以像删除持久节点一样主动删除临时节点。</p>
+<p>在平时的开发中，我们可以利用临时节点的这一特性来做服务器集群内机器运行情况的统计，将集群设置为“/servers”节点，并为集群下的每台服务器创建一个临时节点“/servers/host”，当服务器下线时该节点自动被删除，最后统计临时节点个数就可以知道集群中的运行情况</p>
+</li>
+<li><p>有序节点</p>
+<p>最后我们再说一下有序节点，其实有序节点并不算是一种单独种类的节点，而是在之前提到的持久节点和临时节点特性的基础上，增加了一个节点有序的性质。所谓节点有序是说在我们创建有序节点的时候，ZooKeeper 服务器会自动使用一个单调递增的数字作为后缀，追加到我们创建节点的后边。例如一个客户端创建了一个路径为 works/task- 的有序节点，那么 ZooKeeper 将会生成一个序号并追加到该节点的路径后，最后该节点的路径为 works/task-1。通过这种方式我们可以直观的查看到节点的创建顺序。</p>
+</li>
+</ul>
+<p>上述这几种数据节点虽然类型不同，但 ZooKeeper 中的每个节点都维护有这些内容：<strong>一个二进制数组</strong>（byte data[]），<strong>用来存储节点的数据</strong>、<strong>ACL 访问控制信息</strong>、<strong>子节点数据</strong>（因为临时节点不允许有子节点，所以其子节点字段为 null），除此之外每个数据节点还有一个记录自身状态信息的字段 stat。</p>
+<h3 id="节点的状态结构"><a href="#节点的状态结构" class="headerlink" title="节点的状态结构"></a>节点的状态结构</h3><p>每个节点都有属于自己的状态信息，这就很像我们每个人的身份信息一样，我们打开之前的客户端，执行 stat /{节点名称}，可以看到控制台输出了一些信息，这些就是节点状态信息。具体信息如下图所示:</p>
+<p><img src="/2020/03/31/zookeeper/zookeeper%E8%8A%82%E7%82%B9%E4%BF%A1%E6%81%AF.png" alt="zookeeper节点信息"></p>
+<p>这里我们重点讲解一下版本相关的属性，在 ZooKeeper 中为数据节点引入了版本的概念，每个数据节点有 3 种类型的版本信息，对数据节点的任何更新操作都会引起版本号的变化。ZooKeeper 的版本信息表示的是对节点数据内容、子节点信息或者是 ACL 信息的修改次数。</p>
+<h3 id="使用-ZooKeeper-实现锁"><a href="#使用-ZooKeeper-实现锁" class="headerlink" title="使用 ZooKeeper 实现锁"></a>使用 ZooKeeper 实现锁</h3><h4 id="悲观锁"><a href="#悲观锁" class="headerlink" title="悲观锁"></a>悲观锁</h4><p>悲观锁认为进程对临界区的竞争总是会出现，为了保证进程在操作数据时，该条数据不被其他进程修改。数据会一直处于被锁定的状态。</p>
+<p>我们假设一个具有 n 个进程的应用，同时访问临界区资源，我们通过进程创建 ZooKeeper 节点 /locks 的方式获取锁。</p>
+<p>线程 a 通过成功创建 ZooKeeper 节点“/locks”的方式获取锁后继续执行，这时进程 b 也要访问临界区资源，于是进程 b 也尝试创建“/locks”节点来获取锁，因为之前进程 a 已经创建该节点，所以进程 b 创建节点失败无法获得锁。</p>
+<p>这样就实现了一个简单的悲观锁，不过这也有一个隐含的问题，就是当进程 a 因为异常中断导致 /locks 节点始终存在，其他线程因为无法再次创建节点而无法获取锁，这就产生了一个死锁问题。针对这种情况我们可以通过将节点设置为临时节点的方式避免。并通过在服务器端添加监听事件来通知其他进程重新获取锁。</p>
+<h4 id="乐观锁"><a href="#乐观锁" class="headerlink" title="乐观锁"></a>乐观锁</h4><p>乐观锁认为，进程对临界区资源的竞争不会总是出现，所以相对悲观锁而言。加锁方式没有那么激烈，不会全程的锁定资源，而是在数据进行提交更新的时候，对数据的冲突与否进行检测，如果发现冲突了，则拒绝操作。</p>
+<p><strong>乐观锁基本可以分为读取、校验、写入三个步骤。</strong>CAS（Compare-And-Swap），即比较并替换，就是一个乐观锁的实现。CAS 有 3 个操作数，内存值 V，旧的预期值 A，要修改的新值 B。当且仅当预期值 A 和内存值 V 相同时，将内存值 V 修改为 B，否则什么都不做。</p>
+<p>在 ZooKeeper 中的 version 属性就是用来实现乐观锁机制中的“校验”的，ZooKeeper 每个节点都有数据版本的概念，在调用更新操作的时候，假如有一个客户端试图进行更新操作，它会携带上次获取到的 version 值进行更新。而如果在这段时间内，ZooKeeper 服务器上该节点的数值恰好已经被其他客户端更新了，那么其数据版本一定也会发生变化，因此肯定与客户端携带的 version 无法匹配，便无法成功更新，因此可以有效地避免一些分布式更新的并发问题。</p>
+<p>在 ZooKeeper 的底层实现中，当服务端处理 setDataRequest 请求时，首先会调用 checkAndIncVersion 方法进行数据版本校验。ZooKeeper 会从 setDataRequest 请求中获取当前请求的版本 version，同时通过 getRecordForPath 方法获取服务器数据记录 nodeRecord， 从中得到当前服务器上的版本信息 currentversion。如果 version 为 -1，表示该请求操作不使用乐观锁，可以忽略版本对比；如果 version 不是 -1，那么就对比 version 和 currentversion，如果相等，则进行更新操作，否则就会抛出 BadVersionException 异常中断操作。</p>
+<h2 id="zookeeper-一致性介绍"><a href="#zookeeper-一致性介绍" class="headerlink" title="zookeeper 一致性介绍"></a>zookeeper 一致性介绍</h2><p>分为以下几个方面：</p>
 <ul>
 <li><p>顺序一致性</p>
 </li>
@@ -542,7 +571,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#zookeeper-一致性介绍"><span class="nav-number">1.</span> <span class="nav-text">zookeeper 一致性介绍</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#paxos-算法"><span class="nav-number">2.</span> <span class="nav-text">paxos 算法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#prepare阶段"><span class="nav-number">2.1.</span> <span class="nav-text">prepare阶段</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#accept阶段"><span class="nav-number">2.2.</span> <span class="nav-text">accept阶段</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ZAB（zookeeper-atomic-broadcast）协议"><span class="nav-number">3.</span> <span class="nav-text">ZAB（zookeeper atomic broadcast）协议</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#ZAB中的三个角色"><span class="nav-number">3.1.</span> <span class="nav-text">ZAB中的三个角色</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#三个重要的数据"><span class="nav-number">3.2.</span> <span class="nav-text">三个重要的数据</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ZAB协议的三种模式"><span class="nav-number">3.3.</span> <span class="nav-text">ZAB协议的三种模式</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#leader-选举"><span class="nav-number">4.</span> <span class="nav-text">leader 选举</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#基本概念"><span class="nav-number">4.1.</span> <span class="nav-text">基本概念</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#leader-选举算法"><span class="nav-number">4.2.</span> <span class="nav-text">leader 选举算法</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#zk-集群"><span class="nav-number">5.</span> <span class="nav-text">zk 集群</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#CAP"><span class="nav-number">6.</span> <span class="nav-text">CAP</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#BASE"><span class="nav-number">7.</span> <span class="nav-text">BASE</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#zookeeper-watcher机制"><span class="nav-number">8.</span> <span class="nav-text">zookeeper watcher机制</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#zookeeper-数据类型"><span class="nav-number">9.</span> <span class="nav-text">zookeeper 数据类型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#zookeeper典型应用场景"><span class="nav-number">10.</span> <span class="nav-text">zookeeper典型应用场景</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#持续更新-注"><span class="nav-number">11.</span> <span class="nav-text">持续更新(注)</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#zookeeper基础知识"><span class="nav-number">1.</span> <span class="nav-text">zookeeper基础知识</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#数据模型"><span class="nav-number">1.1.</span> <span class="nav-text">数据模型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#节点的状态结构"><span class="nav-number">1.2.</span> <span class="nav-text">节点的状态结构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#使用-ZooKeeper-实现锁"><span class="nav-number">1.3.</span> <span class="nav-text">使用 ZooKeeper 实现锁</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#悲观锁"><span class="nav-number">1.3.1.</span> <span class="nav-text">悲观锁</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#乐观锁"><span class="nav-number">1.3.2.</span> <span class="nav-text">乐观锁</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#zookeeper-一致性介绍"><span class="nav-number">2.</span> <span class="nav-text">zookeeper 一致性介绍</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#paxos-算法"><span class="nav-number">3.</span> <span class="nav-text">paxos 算法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#prepare阶段"><span class="nav-number">3.1.</span> <span class="nav-text">prepare阶段</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#accept阶段"><span class="nav-number">3.2.</span> <span class="nav-text">accept阶段</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ZAB（zookeeper-atomic-broadcast）协议"><span class="nav-number">4.</span> <span class="nav-text">ZAB（zookeeper atomic broadcast）协议</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#ZAB中的三个角色"><span class="nav-number">4.1.</span> <span class="nav-text">ZAB中的三个角色</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#三个重要的数据"><span class="nav-number">4.2.</span> <span class="nav-text">三个重要的数据</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ZAB协议的三种模式"><span class="nav-number">4.3.</span> <span class="nav-text">ZAB协议的三种模式</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#leader-选举"><span class="nav-number">5.</span> <span class="nav-text">leader 选举</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#基本概念"><span class="nav-number">5.1.</span> <span class="nav-text">基本概念</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#leader-选举算法"><span class="nav-number">5.2.</span> <span class="nav-text">leader 选举算法</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#zk-集群"><span class="nav-number">6.</span> <span class="nav-text">zk 集群</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#CAP"><span class="nav-number">7.</span> <span class="nav-text">CAP</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#BASE"><span class="nav-number">8.</span> <span class="nav-text">BASE</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#zookeeper-watcher机制"><span class="nav-number">9.</span> <span class="nav-text">zookeeper watcher机制</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#zookeeper-数据类型"><span class="nav-number">10.</span> <span class="nav-text">zookeeper 数据类型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#zookeeper典型应用场景"><span class="nav-number">11.</span> <span class="nav-text">zookeeper典型应用场景</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#持续更新-注"><span class="nav-number">12.</span> <span class="nav-text">持续更新(注)</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
