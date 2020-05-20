@@ -48,19 +48,17 @@
   };
 </script>
 
-  <meta name="description" content="Java, Architect">
+  <meta name="description" content="spring cloud简介spring cloud构建于spring boot之上，很容易上手并应用于生产之中。 spring cloud是一系列框架的有序集合。利用spring boot开发的便利性巧妙的简化了分布式基础设施的开发。如服务发现注册，配置中心，消息总线，负载均衡，断路器，数据监控等。将各家公司开发的比较成熟的，经得起实际考验的服务框架组合起来。 spring cloud是微服务架">
 <meta property="og:type" content="article">
 <meta property="og:title" content="spring cloud">
 <meta property="og:url" content="http://yoursite.com/2020/01/20/spring-cloud/index.html">
 <meta property="og:site_name" content="Architect">
-<meta property="og:description" content="Java, Architect">
+<meta property="og:description" content="spring cloud简介spring cloud构建于spring boot之上，很容易上手并应用于生产之中。 spring cloud是一系列框架的有序集合。利用spring boot开发的便利性巧妙的简化了分布式基础设施的开发。如服务发现注册，配置中心，消息总线，负载均衡，断路器，数据监控等。将各家公司开发的比较成熟的，经得起实际考验的服务框架组合起来。 spring cloud是微服务架">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2020-01-20T08:36:10.000Z">
-<meta property="article:modified_time" content="2020-01-20T08:36:10.652Z">
+<meta property="article:modified_time" content="2020-05-20T01:21:37.837Z">
 <meta property="article:author" content="Chris Shang">
-<meta property="article:tag" content="Java">
-<meta property="article:tag" content=" Architecher">
-<meta property="article:tag" content=" Distribute">
+<meta property="article:tag" content="spring, spring cloud">
 <meta name="twitter:card" content="summary">
 
 <link rel="canonical" href="http://yoursite.com/2020/01/20/spring-cloud/">
@@ -203,6 +201,13 @@
 
               <time title="Created: 2020-01-20 16:36:10" itemprop="dateCreated datePublished" datetime="2020-01-20T16:36:10+08:00">2020-01-20</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2020-05-20 09:21:37" itemprop="dateModified" datetime="2020-05-20T09:21:37+08:00">2020-05-20</time>
+              </span>
 
           
             <span class="post-meta-item" title="Views" id="busuanzi_container_page_pv" style="display: none;">
@@ -222,7 +227,207 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        
+        <h1 id="spring-cloud简介"><a href="#spring-cloud简介" class="headerlink" title="spring cloud简介"></a>spring cloud简介</h1><p>spring cloud构建于spring boot之上，很容易上手并应用于生产之中。 spring cloud是一系列框架的有序集合。利用spring boot开发的便利性巧妙的简化了分布式基础设施的开发。如<strong>服务发现注册，配置中心，消息总线，负载均衡，断路器，数据监控</strong>等。将各家公司开发的比较成熟的，经得起实际考验的服务框架组合起来。</p>
+<p><strong>spring cloud是微服务架构的一站式解决方案</strong>。</p>
+<p>版本号为伦敦地铁站的站名, spring cloud要求运行在某一特定spring boot版本下</p>
+<p>Release Train Boot Version</p>
+<p>Greenwich 2.1.x</p>
+<p>Finchley 2.0.x</p>
+<p>Edgware 1.5.x</p>
+<p>Dalston 1.5.x</p>
+<h1 id="eureka"><a href="#eureka" class="headerlink" title="eureka"></a>eureka</h1><p>是Netflix开发的服务发现框架，spring cloud将其集成在spring-cloud-netflix中。</p>
+<p><strong>与 zookeeper对比</strong></p>
+<ul>
+<li>主要体现在<strong>zookeeper</strong>是<strong>CP</strong>, 当集群节点比较多时, zookeeper的一致性可能会把整个集群拖垮。<strong>eureka</strong>是<strong>AP</strong>, 将可用性做到了极致,即使所有的eureka server都宕机, 也能对外提供服务, 因为本地保存了一份服务列表</li>
+</ul>
+<p>项目中使用：</p>
+<p>在Application启动类上添加:@<strong>EnableEurekaServer</strong>注解</p>
+<p>eureka.client.register-with-eureka=false</p>
+<p>eureka.client.fetch-registry=false</p>
+<p>Eureka server默认<strong>90秒</strong>(三个心跳周期)内没有检测到某服务列表中的某微服务,则会自动将该微服务从服务列表中删除. 在短时间内若eureka server丢失服务过多,其会自动进入自我保护模式,当收到的心跳数量恢复到阈值以上时,其会自动退出自我保护模式。</p>
+<p>eureka.server.renewal-percent-threshold=0.85(default), 收到的心跳数量小于85%时.则进入自动保护模式</p>
+<p>eureka.server.enable-self-preservation=true(default)</p>
+<p>新添加一个提供者或者消费者需要60秒才能放到服务注册中心</p>
+<h1 id="openfeign-和-Ribbon"><a href="#openfeign-和-Ribbon" class="headerlink" title="openfeign 和 Ribbon"></a>openfeign 和 Ribbon</h1><p>spring cloud之前版本使用的是feign,现在改为openfeign了<strong>,open feign内置了ribbon</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">@FeignClient(&quot;provider-depart&quot;)</span><br><span class="line">public interface DepartService &#123;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在client中直接注入该service即可, 在client的启动类中添加@<strong>EnableFeignClients</strong>(basePackages = “指定service接口所在包”)注解</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">feign.client.config.default.connect-timeout&#x3D;5000 #连接超时时限</span><br><span class="line">feign.client.config.default.read-timeout&#x3D;10000 #读取响应超时时限</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F; 开启压缩</span><br><span class="line">feign.compression.request.enabled&#x3D;true</span><br><span class="line">feign.compression.request.mime-types&#x3D;[&quot;text&#x2F;xml&quot;,&quot;application&#x2F;xml&quot;,&quot;application&#x2F;json&quot;]</span><br><span class="line">feign.compression.request.min-request-size&#x3D;2048</span><br><span class="line">feign.compression.response.enabled&#x3D;true</span><br></pre></td></tr></table></figure>
+
+<h1 id="Ribbon内置负载均衡算法"><a href="#Ribbon内置负载均衡算法" class="headerlink" title="Ribbon内置负载均衡算法"></a>Ribbon内置负载均衡算法</h1><ul>
+<li><strong>RoundRobinRule</strong>(轮询策略,默认负载均衡策略)</li>
+<li><strong>RandomRule</strong> (随机策略)</li>
+<li><strong>RetryRule</strong>: 安装RoundRobin获取Provider,若获取失败,则在指定的时限内重试,默认时限为500ms</li>
+<li><strong>BestAvailableRule</strong>: 选择连接消费者最少的Provider连接</li>
+<li><strong>AvailabilityFilterRule</strong>: 过滤掉处于断路器跳闸状态的Provider和超过连接极限的Provider,对剩余Provider采用轮询策略</li>
+<li><strong>ZoneAvoidanceRule</strong>: 根据所在区域的Provider的性能选择可用Provider</li>
+<li><strong>WeightedResponseTimeRule</strong>: “权重响应时间策略”,根据每个Provider的平均响应时间计算其权重,越快权重越高.在刚启动时,</li>
+</ul>
+<p>采用轮询策略,后面就根据权重进行选择了.</p>
+<p>修改负载均衡策略</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">修改配置文件:ribon.NFLoadBalancerRuleClassName&#x3D;com.netflix.loadbalancer.RandomRule</span><br><span class="line">在配置类中:</span><br><span class="line">@Bean</span><br><span class="line">public IRule loadBalanceRule() &#123;</span><br><span class="line">return new RandomRule();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>自定义负载均衡策略</strong></p>
+<p>a. 实现<strong>IRule</strong>接口</p>
+<p>b. 重写choose(Object key)方法,</p>
+<p>private ILoadBalancer lb; // 可以获取到所有的可用的server</p>
+<h1 id="Hysttix熔断机制"><a href="#Hysttix熔断机制" class="headerlink" title="Hysttix熔断机制"></a>Hysttix熔断机制</h1><ul>
+<li>雪崩效应</li>
+</ul>
+<p>在复杂的系统中,会有很深的调用链路,如果链路中的某个服务不可用或延迟过高,且当有越来越多的请求,则会导致过度占用系统的线程,IO等资源.最终导致系统崩溃</p>
+<p>熔断机制就是为了解决雪崩效应的, 熔断分两种,预熔断和及时熔断</p>
+<ul>
+<li>服务降级</li>
+</ul>
+<p>服务降级是请求发生问题时的一种增强用户体验的一种方式. 发生服务熔断一定会发生服务降级.服务降级不一定会发生服务熔断</p>
+<p>spring cloud是通过hystrix来实现服务降级和熔断的, 对应的依赖: spring-cloud-starter-netflix-hystrix</p>
+<p>在启动类中添加: @<strong>EnableCircuitBreaker</strong></p>
+<p>由于启动类注解过多,可以添加:@SpringCloudApplication, 其包含: @SpringBootApplication, @<strong>EnableDiscoveryClient</strong>和@<strong>EnableCircuitBreaker</strong></p>
+<p><strong>openfeign的服务降级</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">@Service</span><br><span class="line">@FeignClient(value &#x3D; &quot;provider01&quot;, fallback &#x3D; DepartFallback.class)</span><br><span class="line">@RequestMapping(&quot;&#x2F;provider&#x2F;depart&quot;)</span><br><span class="line">public interface DepartService &#123;</span><br><span class="line">    @GetMapping(&quot;&#x2F;getDepartName&quot;)</span><br><span class="line">    public String getDepartName();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">@Component</span><br><span class="line">@RequestMapping(&quot;&#x2F;fallback&#x2F;depart&quot;)&#x2F;&#x2F; 注意这个path一定要写,要不然会用DepartService中的path,造成路径重复</span><br><span class="line">public class DepartFallback implements DepartService &#123;</span><br><span class="line">@Override</span><br><span class="line">public String getDepartName() &#123;</span><br><span class="line">return &quot;fall back depart name&quot;;</span><br><span class="line">&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>hystrix服务降级有两种方式:</strong></p>
+<ul>
+<li>fallbackMethod</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">在controller中,</span><br><span class="line">@HystrixCommand(fallbackMethod &#x3D; &quot;getHystrixHandle&quot;)</span><br><span class="line">@GetMapping(&quot;&#x2F;get&#x2F;&#123;id&#125;&quot;)</span><br><span class="line">public Depart getHandle(@PathVariable(&quot;id&quot;) int id) &#123;</span><br><span class="line">String url &#x3D; &quot;http:&#x2F;&#x2F;localhost:8081&#x2F;provider&#x2F;depart&#x2F;get&#x2F;&quot; + id;</span><br><span class="line">return restTemplate.getForObject(url, Depart.class);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F; 服务降级方法</span><br><span class="line">public Depart getHystrixHandle(@PathVariable(&quot;id&quot;) int id) &#123;</span><br><span class="line">Depart depart &#x3D; new Depart();</span><br><span class="line">depart.setId(id);</span><br><span class="line">depart.setName(&quot;no this depart&quot;);</span><br><span class="line">return depart;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>fallbackFactory</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">1. 自定义factory实现FallbackFactory&lt;DepartService&gt; &#123;</span><br><span class="line">@Override</span><br><span class="line">public DepartService create(Throwable throwable) &#123;</span><br><span class="line">return new DepartService() &#123;</span><br><span class="line">&#x2F;&#x2F;CRUD方法的实现</span><br><span class="line">&#125;</span><br><span class="line">&#125;</span><br><span class="line">2. 在DepartService上添加:</span><br><span class="line">@FeignClient(value &#x3D; &quot;abcmsc-provider-depart&quot;, fallbackFactory &#x3D; DepartFallbackFactory.class)</span><br></pre></td></tr></table></figure>
+
+
+
+<p>三种熔断的优先级</p>
+<p><strong>openfeign 的fallback &gt; fallback factory &gt; fallback method</strong></p>
+<h1 id="hystrix高级配置"><a href="#hystrix高级配置" class="headerlink" title="hystrix高级配置"></a>hystrix高级配置</h1><p>隔离策略(HystrixCommandProperties)</p>
+<p>防止提供者被熔断,防止大量客户端请求被阻塞</p>
+<p>hystrix.command.default.execution.isolation.strategy=<strong>thread/semaphore</strong></p>
+<p>隔离请求的方式有两种</p>
+<ul>
+<li>线程隔离(default)</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">hystrix创建一个依赖线程池,每个请求可以获得一个线程,超过上限则阻塞</span><br><span class="line">默认超时时限为1000毫秒,hystrix.command.default.execution.isolation.thread.timeoutInMilliseconds&#x3D;1000</span><br><span class="line">hystrix.command.default.execution.isolation.thread.interruptOnTimeout&#x3D;true&#x2F;&#x2F;default, 超时是否中断</span><br><span class="line">hystrix.command.default.execution.isolation.thread.interruptOnCancel&#x3D;false&#x2F;default, 取消是否中断</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>信号量隔离</li>
+</ul>
+<p>hystrix为每个依赖创建一个信号量(其实就是一个整型的数字),每过来一个则减1,用完则阻塞</p>
+<p>对比</p>
+<p>线程隔离中对依赖的请求线程与调用线程是不同的线程,而信号量隔离是同一个线程,所以在<strong>复杂长链路中选线程隔离(速度快),短链路选信号量隔离</strong></p>
+<h1 id="dashboard-监控仪表盘"><a href="#dashboard-监控仪表盘" class="headerlink" title="dashboard 监控仪表盘"></a>dashboard 监控仪表盘</h1><p>对应依赖: spring-cloud-starter-netflix-hystrix-dashboard</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">启动类添加@EnableHystrixDashboard</span><br><span class="line">http:&#x2F;&#x2F;localhost:8082&#x2F;hystrix</span><br><span class="line"></span><br><span class="line">项目中添加:</span><br><span class="line"></span><br><span class="line">@Bean</span><br><span class="line">public ServletRegistrationBean getServlet() &#123;</span><br><span class="line">HystrixMetricsStreamServlet streamServlet &#x3D; new HystrixMetricsStreamServlet();</span><br><span class="line">ServletRegistrationBean registrationBean &#x3D; new ServletRegistrationBean(streamServlet);</span><br><span class="line">registrationBean.setLoadOnStartup(1);</span><br><span class="line">registrationBean.addUrlMappings(&quot;&#x2F;hystrix.stream&quot;);</span><br><span class="line">registrationBean.setName(&quot;HystrixMetricsStreamServlet&quot;);</span><br><span class="line">return registrationBean;</span><br><span class="line">&#125;</span><br><span class="line">注意使用:http:&#x2F;&#x2F;localhost:8082&#x2F;hystrix.stream</span><br></pre></td></tr></table></figure>
+
+
+
+<p><strong>前面是对单个消费者进行监控,turbine可以对整个集群进行监控, turbine能够汇集监控信息,然后聚合提供给Hystrix Dashboard</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">a. 导入turbine依赖</span><br><span class="line">&lt;dependency&gt;</span><br><span class="line">&lt;groupId&gt;org.springframework.cloud&lt;&#x2F;groupId&gt;</span><br><span class="line">&lt;artifactId&gt;spring-cloud-starter-turbine&lt;&#x2F;artifactId&gt;</span><br><span class="line">&lt;&#x2F;dependency&gt;</span><br><span class="line">b. 在配置文件中配置turbine</span><br><span class="line">turbine.appConfig&#x3D;node01,node02 &#x2F;&#x2F; 监控serviceId列表</span><br><span class="line">turbine.aggregator.clusterConfig&#x3D; default</span><br><span class="line">turbine.clusterNameExpression&#x3D;&quot;default&quot;</span><br><span class="line">c. 在启动类上添加@EnableTurbine注解</span><br></pre></td></tr></table></figure>
+
+
+
+<p>服务降级报警机制</p>
+<p>无论哪种原因启用了服务降级, 系统都应该向管理员发出警报通知管理员</p>
+<p>在发送短信之前,应先查看服务降级标识(以防有大量请求过来,都发生降级,造成发送无数条短信),这个标识应放在Redis中(双重检测锁)</p>
+<h1 id="zuul-微服务网关"><a href="#zuul-微服务网关" class="headerlink" title="zuul(微服务网关)"></a>zuul(微服务网关)</h1><p>网关用于对请求进行鉴权,限流,路由,监控等</p>
+<p><strong>zuul主要提供请求的路由和与过滤功能</strong></p>
+<p>路由:对外部请求转发到具体的微服务主机,是外部访问微服务系统的统一入口</p>
+<p>过滤:对外部请求进行干预</p>
+<p>通过zuul, 访问消费者的接口就变成了:<span class="exturl" data-url="aHR0cDovL2xvY2FsaG9zdDo4MDgzL2NvbnN1bWVyMDEvZGVwYXJ0L2dldERlcGFydE5hbWU=" title="http://localhost:8083/consumer01/depart/getDepartName">http://localhost:8083/consumer01/depart/getDepartName<i class="fa fa-external-link"></i></span></p>
+<p>注:consumer01为微服务名称</p>
+<p>应用开启zuul代理模式:</p>
+<p>@<strong>EnableZuulProxy</strong>,</p>
+<p>添加依赖:spring-cloud-starter-netflix-zuul</p>
+<p>路由策略配置</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">zuul:</span><br><span class="line">prefix: &#x2F;abc &#x2F;&#x2F; 配置前缀,必须以&quot;&#x2F;&quot;开始</span><br><span class="line">ignored-services: &quot;*&quot; &#x2F;&#x2F; 屏蔽所有微服务名称,即防止通过微服务名称访问</span><br><span class="line">ignored-patterns: &#x2F;**&#x2F;list&#x2F;** &#x2F;&#x2F; 屏蔽路径</span><br><span class="line">sensitive-headers: token &#x2F;&#x2F; 指定token被屏蔽, 默认的是&quot;Cookie&quot;, &quot;Set-Cookie&quot;, &quot;Authorization&quot;</span><br><span class="line">routes:</span><br><span class="line"># 指定微服务的路由规则</span><br><span class="line">abcmsc-consumer-depart-8080: &#x2F;abc8080&#x2F;**, 也可以写成&quot;&#x2F;**&quot;</span><br><span class="line">abcmsc-consumer-depart-8090: &#x2F;abc8090&#x2F;**</span><br><span class="line">abcmsc-consumer-depart: &#x2F;abc012&#x2F;**</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>负载均衡</li>
+</ul>
+<p>默认是轮询</p>
+<ul>
+<li>zuul的服务降级</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line">实现FallbackProvider</span><br><span class="line">@Component</span><br><span class="line">public class ConsumerFallback implements FallbackProvider &#123;</span><br><span class="line">&#x2F;&#x2F; 指定要降级的微服务名称</span><br><span class="line">@Override</span><br><span class="line">public String getRoute() &#123;</span><br><span class="line">&#x2F;&#x2F; 对所有微服务降级</span><br><span class="line">return &quot;*&quot;;</span><br><span class="line">&#x2F;&#x2F; 仅对指定的微服务进行降级</span><br><span class="line">&#x2F;&#x2F; return &quot;abcmsc-consumer-depart-8080&quot;;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F; 定制降级响应</span><br><span class="line">@Override</span><br><span class="line">public ClientHttpResponse fallbackResponse(String route, Throwable cause) &#123;</span><br><span class="line">return new ClientHttpResponse() &#123;</span><br><span class="line">@Override</span><br><span class="line">public HttpStatus getStatusCode() throws IOException &#123;</span><br><span class="line">&#x2F;&#x2F; 返回状态常量</span><br><span class="line">return HttpStatus.SERVICE_UNAVAILABLE;</span><br><span class="line">&#125;</span><br><span class="line">@Override</span><br><span class="line">public int getRawStatusCode() throws IOException &#123;</span><br><span class="line">&#x2F;&#x2F; 返回状态码，这里为503</span><br><span class="line">return HttpStatus.SERVICE_UNAVAILABLE.value();</span><br><span class="line">&#125;</span><br><span class="line">@Override</span><br><span class="line">public String getStatusText() throws IOException &#123;</span><br><span class="line">&#x2F;&#x2F; 返回状态码对应的状态短语，这里为&quot;Service Unavailable&quot;</span><br><span class="line">return HttpStatus.SERVICE_UNAVAILABLE.getReasonPhrase();</span><br><span class="line">&#125;</span><br><span class="line">@Override</span><br><span class="line">public void close() &#123; &#125;</span><br><span class="line">@Override</span><br><span class="line">public InputStream getBody() throws IOException &#123;</span><br><span class="line">&#x2F;&#x2F; 设置降级信息</span><br><span class="line">String msg &#x3D; &quot;fallback:&quot; + ConsumerFallback.this.getRoute();</span><br><span class="line">return new ByteArrayInputStream(msg.getBytes());</span><br><span class="line">&#125;</span><br><span class="line">@Override</span><br><span class="line">public HttpHeaders getHeaders() &#123;</span><br><span class="line">HttpHeaders headers &#x3D; new HttpHeaders();</span><br><span class="line">headers.setContentType(MediaType.APPLICATION_JSON);</span><br><span class="line">return headers;</span><br><span class="line">&#125;</span><br><span class="line">&#125;;</span><br><span class="line">&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>路由过滤</li>
+</ul>
+<p>在路由前,中,后都可以对请求进行过滤</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line">需要继承ZuulFilter</span><br><span class="line">@Component</span><br><span class="line">@Slf4j</span><br><span class="line">public class RouteFilter extends ZuulFilter &#123;</span><br><span class="line">&#x2F;&#x2F; 指定路由之前执行过滤</span><br><span class="line">@Override</span><br><span class="line">public String filterType() &#123;</span><br><span class="line">&#x2F;&#x2F; 返回&quot;pre&quot;</span><br><span class="line">return FilterConstants.PRE_TYPE;</span><br><span class="line">&#125;</span><br><span class="line">@Override</span><br><span class="line">public int filterOrder() &#123;</span><br><span class="line">&#x2F;&#x2F; 在系统最小值-3的前面执行</span><br><span class="line">return -5;</span><br><span class="line">&#125;</span><br><span class="line">&#x2F;&#x2F; 对请求通过过滤的后的逻辑</span><br><span class="line">@Override</span><br><span class="line">public Object run() throws ZuulException &#123;</span><br><span class="line">log.info(&quot;通过过滤&quot;);</span><br><span class="line">return null;</span><br><span class="line">&#125;</span><br><span class="line">&#x2F;&#x2F; 对请求进行过滤器的核心逻辑</span><br><span class="line">@Override</span><br><span class="line">public boolean shouldFilter() &#123;</span><br><span class="line">&#x2F;&#x2F; 获取请求上下文</span><br><span class="line">RequestContext context &#x3D;</span><br><span class="line">RequestContext.getCurrentContext();</span><br><span class="line">&#x2F;&#x2F; 获取请求</span><br><span class="line">HttpServletRequest request &#x3D; context.getRequest();</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F; 获取请求参数</span><br><span class="line">String user &#x3D; request.getParameter(&quot;user&quot;);</span><br><span class="line">&#x2F;&#x2F; 获取请求URI</span><br><span class="line">String uri &#x3D; request.getRequestURI();</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F; 只有当请求访问的是&#x2F;abc8080且user为空时是不能通过过滤的</span><br><span class="line">if(uri.contains(&quot;&#x2F;abc8080&quot;) &amp;&amp; StringUtils.isEmpty(user)) &#123;</span><br><span class="line">log.warn(&quot;user用户为空&quot;);</span><br><span class="line">&#x2F;&#x2F; 指定当前请求未通过zuul过滤，默认值为true</span><br><span class="line">context.setSendZuulResponse(false);</span><br><span class="line">&#x2F;&#x2F; 向客户端响应码401，未授权</span><br><span class="line">context.setResponseStatusCode(HttpStatus.SC_UNAUTHORIZED);</span><br><span class="line">return false;</span><br><span class="line">&#125;</span><br><span class="line">return true;</span><br><span class="line">&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="zuul-限流"><a href="#zuul-限流" class="headerlink" title="zuul 限流"></a>zuul 限流</h1><ul>
+<li>令牌桶限流</li>
+</ul>
+<p>Guava的RateLimit, 会创建一个每秒产生多少个令牌的limit,如果尝试获取失败,则拦截</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">1. RouteFilter extends ZuulFilter</span><br><span class="line">2. private static final RateLimiter rateLimiter &#x3D; RateLimiter.create(2);</span><br><span class="line">3. rateLimiter.tryAcquire()</span><br></pre></td></tr></table></figure>
+
+
+
+<ul>
+<li>多维请求限流</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">令牌桶限流粒度有点大,使用spring-cloud-zuul-ratelimit限流库可以做到细粒度限流:</span><br><span class="line">&lt;groupId&gt;com.marcosbarbero.cloud&lt;&#x2F;groupId&gt;</span><br><span class="line">&lt;artifactId&gt;spring-cloud-zuul-ratelimit&lt;&#x2F;artifactId&gt;</span><br><span class="line">&lt;version&gt;2.2.3.RELEASE&lt;&#x2F;version&gt;</span><br><span class="line">user:单位时间窗内经过该网关的用户数量限制</span><br><span class="line">origin:客户端IP的限流,单位时间窗内经过该网关的IP数量限制</span><br><span class="line">URL:单位时间窗内经过该网关的请求的URL数量限制</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>漏桶限流</li>
+</ul>
+<p>水(请求)先进入到漏桶里,漏桶以一定的速度出水(接口有响应速率),当水流入速度过大会直接溢出(访问频率超过接口响应速率),然后就拒绝请求,可以看出漏桶算法能强行限制数据的传输速率.流出速率是一定的</p>
+<h1 id="zuul灰度发布"><a href="#zuul灰度发布" class="headerlink" title="zuul灰度发布"></a>zuul灰度发布</h1><p>灰度发布是根据Eureka的元数据来实现的</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">a. consumer配置文件中添加:eureka.instance.metadata-map.host-mark&#x3D;running-host</span><br><span class="line">b. 在zuul server中添加该依赖:</span><br><span class="line">&lt;dependency&gt;</span><br><span class="line">&lt;groupId&gt;io.jmnarloch&lt;&#x2F;groupId&gt;</span><br><span class="line">&lt;artifactId&gt;ribbon-discovery-filter-spring-cloud-starter&lt;&#x2F;artifactId&gt;</span><br><span class="line">&lt;version&gt;2.1.0&lt;&#x2F;version&gt;</span><br><span class="line">&lt;&#x2F;dependency&gt;</span><br><span class="line">c. 在继承ZuulFilter的类中添加如下代码:</span><br><span class="line">@Override</span><br><span class="line">public Object run() throws ZuulException &#123;</span><br><span class="line">RequestContext context &#x3D; RequestContext.getCurrentContext();</span><br><span class="line">final HttpServletRequest request &#x3D; context.getRequest();</span><br><span class="line">String mark &#x3D; request.getHeader(&quot;gray-mark&quot;);</span><br><span class="line">String host &#x3D; &quot;running-host&quot;;</span><br><span class="line">if (StringUtils.isNotBlank(mark) &amp;&amp; &quot;enable&quot;.equals(mark)) &#123;</span><br><span class="line">host &#x3D; &quot;gray-host&quot;;</span><br><span class="line">&#125;</span><br><span class="line">RibbonFilterContextHolder.getCurrentContext().add(&quot;host-mark&quot;, host);</span><br><span class="line">return null;</span><br><span class="line">&#125;</span><br><span class="line">这样,根据客户端请求头中传递的gray-mark属性就可以实现该请求流向哪个consumer了</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><strong>在zuul server集群的前端添加NGINX来做负载均衡</strong></li>
+</ul>
+<h1 id="spring-cloud-config"><a href="#spring-cloud-config" class="headerlink" title="spring cloud config"></a>spring cloud config</h1><p>client提交下载请求 — config Server集群 — 远程库(github) — config server 集群将配置文件再组装 – client 拉取重新组装过的组件</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">a. 新创建config server项目</span><br><span class="line">导入:&lt;dependency&gt;</span><br><span class="line">&lt;groupId&gt;org.springframework.cloud&lt;&#x2F;groupId&gt;</span><br><span class="line">&lt;artifactId&gt;spring-cloud-config-server&lt;&#x2F;artifactId&gt;</span><br><span class="line">&lt;&#x2F;dependency&gt;</span><br><span class="line">application.properties配置文件中添加:</span><br><span class="line">server.port&#x3D;9999</span><br><span class="line">spring.cloud.config.server.git.uri&#x3D;git@github.com:MrShang&#x2F;config.git</span><br><span class="line">spring.cloud.config.server.git.timeout&#x3D;5</span><br><span class="line">spring.cloud.config.server.git.default-label&#x3D;master</span><br><span class="line">spring.cloud.config.server.git.private-key&#x3D;~&#x2F;.ssh&#x2F;id_rsa</span><br><span class="line">启动类添加@EnableConfigServer</span><br><span class="line"></span><br><span class="line">注:启动config server之后可以通过:http:&#x2F;&#x2F;localhost:9999&#x2F;application-consumer.yml访问到,还支持json,properties格式</span><br><span class="line">b. 在consumer或者provider中添加config客户端依赖</span><br><span class="line">&lt;dependency&gt;</span><br><span class="line">&lt;groupId&gt;org.springframework.cloud&lt;&#x2F;groupId&gt;</span><br><span class="line">&lt;artifactId&gt;spring-cloud-starter-config&lt;&#x2F;artifactId&gt;</span><br><span class="line">&lt;&#x2F;dependency&gt;</span><br><span class="line">c. 将consumer或者provider的application.properties上传到远程Github仓库:git@github.com:MrShang&#x2F;config.git</span><br><span class="line">本地resources目录下面创建bootstrap.properties(不需要application.properties了)</span><br><span class="line">spring.cloud.config.uri&#x3D;http:&#x2F;&#x2F;localhost:9999</span><br><span class="line">spring.cloud.config.label&#x3D;master</span><br><span class="line">spring.cloud.config.name&#x3D;application-consumer</span><br><span class="line">spring.cloud.config.profile&#x3D;dev</span><br></pre></td></tr></table></figure>
+
+
+
+<p>自动刷新两种实现方式</p>
+<ol>
+<li><p>github的web hooks功能(不推荐使用)</p>
+</li>
+<li><p>spring cloud bus</p>
+</li>
+</ol>
+<p>将服务和服务实例与分布式消息系统连接在一起的事件总线</p>
+<p>流程: git远程库有配置修改,自动更新步骤</p>
+<p>a. 向任意一台config client <strong>发送bus-refresh 的POST请求</strong></p>
+<p>b. config client会通知到config server</p>
+<p>c. config server调用Git 远程库拉取最新配置,并将最新配置传递给config client</p>
+<p>d. 然后该config client把消息发送到消息总线系统(kafka)</p>
+<p>e. 消息总线系统将消息同步到其他config client</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">config client的配置(bootstrap.xml)</span><br><span class="line">spring.cloud.config.uri&#x3D;http:&#x2F;&#x2F;localhost:9999</span><br><span class="line">spring.cloud.config.label&#x3D;master</span><br><span class="line">spring.cloud.config.name&#x3D;application-consumer</span><br><span class="line">spring.cloud.config.profile&#x3D;dev</span><br><span class="line"></span><br><span class="line">spring.kafka.bootstrap-servers&#x3D;</span><br><span class="line">management.endpoints.web.exposure.include&#x3D;bus-refresh</span><br><span class="line"></span><br><span class="line">在用到变量的类添加@RefreshScope注解,如DepartController,DepartServiceImpl</span><br><span class="line">在client端添加该依赖:</span><br><span class="line">&lt;dependency&gt;</span><br><span class="line">&lt;groupId&gt;org.springframework.cloud&lt;&#x2F;groupId&gt;</span><br><span class="line">&lt;artifactId&gt;spring-cloud-starter-bus-kafka&lt;&#x2F;artifactId&gt;</span><br><span class="line">&lt;&#x2F;dependency&gt;</span><br><span class="line">&lt;dependency&gt;</span><br><span class="line">&lt;groupId&gt;org.springframework.boot&lt;&#x2F;groupId&gt;</span><br><span class="line">&lt;artifactId&gt;spring-boot-actuator&lt;&#x2F;artifactId&gt;</span><br><span class="line">&lt;&#x2F;dependency&gt;</span><br><span class="line">发送bus-refresh的POST请求</span><br></pre></td></tr></table></figure>
+
+<h1 id="调用跟踪链-spring-cloud-sleuth-zipkin"><a href="#调用跟踪链-spring-cloud-sleuth-zipkin" class="headerlink" title="调用跟踪链 spring cloud sleuth + zipkin"></a>调用跟踪链 spring cloud sleuth + zipkin</h1><p>spring cloud sleuth可以实现针对spring cloud应用程序的分布式跟踪, 兼容zipkin, HTrace和基于日志的(ELK)跟踪</p>
+<p>跟踪单元中涉及的三个重要概念,trace, span和 annotation</p>
+<p>trace, trace是一个客户端发起响应的开始到收到响应结束为止的过程,称为一个trace</p>
+<p>span, 一个trace包含调用了若干个微服务,span就是指在调用每一个微服务开始到收到微服务的请求的一个记录</p>
+<p>系统分别为trace和span分配了一个64位长度的数字作为ID,即traceId 和 spanId</p>
+<p>annotation: cs(client send), cr(client receive), sr(service receive), ss(service send)</p>
+<p>sleuth + zipkin 日志采样</p>
+<p>zipkin是Twitter开发的APM工具(Application Performance Management),用于日志的聚合,为用户提供UI界面</p>
+<p>zipkin包括4个核心组件</p>
+<p>a. Collector</p>
+<p>处理外部系统发过来的信息,处理为zipkin内部的Span格式,以用于后续的存储,分析,展示</p>
+<p>b. Storage</p>
+<p>存储处理器收到的跟踪信息,可修改存储策略</p>
+<p>c. API</p>
+<p>通过API实现对系统的监控</p>
+<p>d. UI</p>
+<p>展示</p>
+<p>客户端向zipkin日志发送方式</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">a. 添加zipkin依赖(其中包含sleuth)</span><br><span class="line">&lt;dependency&gt;</span><br><span class="line">&lt;groupId&gt;org.springframework.cloud&lt;&#x2F;groupId&gt;</span><br><span class="line">&lt;artifactId&gt;spring-cloud-starter-zipkin&lt;&#x2F;artifactId&gt;</span><br><span class="line">&lt;version&gt;2.1.1.RELEASE&lt;&#x2F;version&gt;</span><br><span class="line">&lt;&#x2F;dependency&gt;</span><br><span class="line">b. 下载zipkin的jar包, 启动 java -jar zipkin.jar, http:&#x2F;&#x2F;localhost:9411&#x2F;zipkin</span><br><span class="line">c. 客户端配置文件添加属性</span><br><span class="line">spring.sleuth.sampler.probability&#x3D;1.0 &#x2F;&#x2F;采样率,默认为0.1</span><br><span class="line">spring.zipkin.base-url&#x3D;http:&#x2F;&#x2F;localhost:9411&#x2F;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>也可以通过kafka向zipkin发送</p>
+<p>客户端配置文件添加: spring.zipkin.sender.type=kafka</p>
+<p>spring.kafka.bootstrap-servers=</p>
+<p>zipkin启动: java -DKAFKA_BOOTSTRAP_SERVERS= kafkaURL:port -jar zipkin.jar</p>
+<h2 id="持续更新-注"><a href="#持续更新-注" class="headerlink" title="持续更新(注)"></a>持续更新(注)</h2><p>该篇blog并不代表该知识点的所有内容, 在今后的工作学习中, <strong><font color="#dd0000">持续更新</font></strong>! 如对blog中的观点有异议/建议,请发送email至: <span class="exturl" data-url="bWFpbHRvOnNoY2hhb3NodWFpQGZveG1haWwuY29t" title="mailto:shchaoshuai@foxmail.com">shchaoshuai@foxmail.com<i class="fa fa-external-link"></i></span>, 感谢您的阅读.</p>
+
     </div>
 
     
@@ -250,6 +455,9 @@
 
 
       <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/spring-spring-cloud/" rel="tag"># spring, spring cloud</a>
+          </div>
 
         
 
@@ -323,6 +531,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#spring-cloud简介"><span class="nav-number">1.</span> <span class="nav-text">spring cloud简介</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#eureka"><span class="nav-number">2.</span> <span class="nav-text">eureka</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#openfeign-和-Ribbon"><span class="nav-number">3.</span> <span class="nav-text">openfeign 和 Ribbon</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Ribbon内置负载均衡算法"><span class="nav-number">4.</span> <span class="nav-text">Ribbon内置负载均衡算法</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Hysttix熔断机制"><span class="nav-number">5.</span> <span class="nav-text">Hysttix熔断机制</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#hystrix高级配置"><span class="nav-number">6.</span> <span class="nav-text">hystrix高级配置</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#dashboard-监控仪表盘"><span class="nav-number">7.</span> <span class="nav-text">dashboard 监控仪表盘</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#zuul-微服务网关"><span class="nav-number">8.</span> <span class="nav-text">zuul(微服务网关)</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#zuul-限流"><span class="nav-number">9.</span> <span class="nav-text">zuul 限流</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#zuul灰度发布"><span class="nav-number">10.</span> <span class="nav-text">zuul灰度发布</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#spring-cloud-config"><span class="nav-number">11.</span> <span class="nav-text">spring cloud config</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#调用跟踪链-spring-cloud-sleuth-zipkin"><span class="nav-number">12.</span> <span class="nav-text">调用跟踪链 spring cloud sleuth + zipkin</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#持续更新-注"><span class="nav-number">12.1.</span> <span class="nav-text">持续更新(注)</span></a></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -343,7 +552,7 @@
         </a>
       </div>
       <div class="site-state-item site-state-tags">
-        <span class="site-state-item-count">13</span>
+        <span class="site-state-item-count">14</span>
         <span class="site-state-item-name">tags</span>
       </div>
   </nav>
